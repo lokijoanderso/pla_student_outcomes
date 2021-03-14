@@ -5,10 +5,168 @@ a {
 
 html,
 body {
-  background: #D6D6CE;
-  font-family: Verdana, Geneva, sans-serif;
+  background: white;
+  font-family: Gill Sans,'Gill Sans', 'Gill Sans MT',
+      Calibri, 'Trebuchet MS', sans-serif;
   height: 100%;
   margin: 0;
   padding: 0;
   width: 100%;
+}
+
+div.header, div.footer {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-content: center;
+  text-align: center;
+  background-color: #D8ECE9;
+}
+
+div.intro {
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+  flex-direction: row;
+  
+}
+
+div.footer h2 {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+div.text {
+  width: 50%;
+  min-width: 500px;
+  padding-left: 50px;
+}
+
+
+h1 {
+    margin: 10px 10px 0px 10px;
+
+}
+
+h2 {
+  margin: 0px 10px 10px 10px;
+  font-size: large;
+  font-style: italic;
+  font-weight: normal;
+}
+
+  h2.title {
+    margin-top: 10px;
+    font-style: normal;
+    font-weight: bold;
+  }
+
+p {
+  margin: 5px 10px 10px 10px;
+  font-size: medium;
+}
+
+div#app {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content:center;
+    align-items: center;
+    margin: 50px, 25px, 100px, 25px;
+}
+
+div#filters {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  margin: 0px;
+}
+
+  div#filters div div {
+    padding: 10px;
+    margin: 5px;
+    background-color: #DBC7DA;
+  }
+
+  .labels {
+    font-size: medium;
+    fill: white;
+}
+
+path {
+  stroke-opacity: 0.35;
+  fill: none;
+}
+
+  path#fp {
+    stroke: #469890;
+  }
+  path#priv {
+    stroke: #316D64;
+  }
+
+  path#pub4 {
+    stroke: #295948;
+  }
+
+  path#pub2 {
+    stroke: #193D30;
+  }
+
+  path#nontran {
+    stroke: #555555;
+  }
+
+  path#grad {
+    stroke: #782E6D;
+  }
+
+  path#nongrad {
+    stroke: #555555;
+  }
+
+rect#fp {
+  fill: #469890;
+}
+
+rect#priv {
+  fill: #316D64;
+}
+
+rect#pub4 {
+  fill: #295948;
+}
+
+rect#pub2 {
+  fill: #193D30;
+}
+
+rect#nontran {
+  fill: #555555;
+}
+
+rect#grad {
+  fill: #782E6D;
+}
+
+rect#nongrad {
+  fill: #555555;
+}
+
+path#selected {
+  stroke: #469890;
+  stroke-opacity: 0.75;
+}
+rect#selected {
+  fill: #469890;
+}
+
+path#unselected {
+  stroke: #555555;
+}
+
+rect#unselected {
+  fill: #555555;
 }
