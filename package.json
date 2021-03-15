@@ -30,6 +30,7 @@
     "d3-fetch": "^2.0.0",
     "d3-sankey": "^0.12.3",
     "d3-selection": "^2.0.0",
+    "d3-transition": "^2.0.0",
     "fetch": "^1.1.0"
   },
   "scripts": {

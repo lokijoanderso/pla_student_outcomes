@@ -42,5 +42,8 @@
 	{"source": 5, "target": 10, "value": 0.048},
 	{"source": 6, "target": 10, "value": 0.105},
 	{"source": 7, "target": 10, "value": 0.117},
-	{"source": 8, "target": 10, "value": 0.141}]
+	{"source": 8, "target": 10, "value": 0.141}],
+
+"cost" : 59451.80,
+"time" : 4.3
 }

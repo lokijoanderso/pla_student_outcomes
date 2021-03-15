@@ -19,8 +19,11 @@ div.header, div.footer {
   justify-content: center;
   flex-direction: column;
   align-content: center;
+  align-items: center;
   text-align: center;
   background-color: #D8ECE9;
+  padding: 10px 0px;
+
 }
 
 div.intro {
@@ -31,10 +34,19 @@ div.intro {
   
 }
 
+div.footerText {
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+  flex-direction: column;
+  max-width: 700px;
+}
+
 div.footer h2 {
   margin-top: 10px;
   font-weight: bold;
 }
+
 
 div.text {
   width: 50%;
@@ -45,7 +57,6 @@ div.text {
 
 h1 {
     margin: 10px 10px 0px 10px;
-
 }
 
 h2 {
@@ -64,6 +75,12 @@ h2 {
 p {
   margin: 5px 10px 10px 10px;
   font-size: medium;
+}
+
+div.text p {
+  margin: 5px 10px 15px 10px;
+  font-size: 18px;
+  
 }
 
 div#app {
