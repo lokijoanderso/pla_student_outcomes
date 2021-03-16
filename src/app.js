@@ -1,11 +1,16 @@
 
-import { prepData, updateData, recalcNodeValues } from './utils';
+import {
+  prepData, updateData,
+  recalcNodeValues,
+  tooltipText
+} from './utils';
 import { select } from 'd3-selection';
 import {
   sankey, sankeyLinkHorizontal, sankeyJustify
 } from 'd3-sankey';
 import { json, csv } from 'd3-fetch';
 import { transition } from 'd3-transition';
+
 
 // data sources
 
@@ -33,7 +38,7 @@ import './main.css';
 
 // set the dimensions and margins of the graph
 
-const margin = { top: 10, right: 10, bottom: 50, left: 10 },
+const margin = { top: 10, right: 10, bottom: 10, left: 10 },
   width = 650 - margin.left - margin.right,
   height = 500 - margin.top - margin.bottom;
 
@@ -111,7 +116,7 @@ function buildFilters(data) {
       updateSankey(newData);
 
       // test code commented out
-      console.log(newData);
+      // console.log(newData);
       //console.log(newSelect);
       console.log(event.target.value, row);
 
@@ -124,7 +129,7 @@ function buildFilters(data) {
 
   // test code commented out
   // console.log(menus);
-  // console.log(filters);
+  // console.log(filters); 
 
   return filters;
 
@@ -187,6 +192,11 @@ function updateSankey(data) {
       d => d.id)
     .classed("node", true);
 
+  // div for the tooltip
+
+  var div = select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 
   // add in the rectangles
 
@@ -196,7 +206,22 @@ function updateSankey(data) {
     .attr("y", d => d.y0)
     .attr("width", d => d.x1 - d.x0)
     .attr("height", d => d.y1 - d.y0)
-    .attr("id", d => d.class);
+    .attr("id", d => d.class)
+    .on("mouseover", function (event, d) {
+
+      div.transition()
+        .duration(200)
+        .style("opacity", .9);
+
+      div.html(tooltipText(d))
+        .style("left", event.pageX + "px")
+        .style("top", event.pageY + "px");
+    })
+    .on("mouseout", function () {
+      div.transition()
+        .duration(500)
+        .style("opacity", 0); 
+    });
 
   node.transition(t)
     .attr("x", d => d.x0)
@@ -225,6 +250,24 @@ function updateSankey(data) {
         return d.name;
       }
     });
+
+  // update callout div with grad rate, etc
+
+  var ratesGrad = select(".grad")
+    .text("" + (data.gradPerc * 100).toFixed(0) + "%");
+
+  var ratesCost = select(".cost")
+    .text("$" + Math.round(data.cost, 0)
+      .toLocaleString('en-US'));
+
+  var ratesTime = select(".time")
+      .text("" + data.time.toFixed(1));
+
+
+
+  console.log("new grad rate:", data.gradPerc);
+  console.log("new cost:", data.cost);
+  console.log("new time:", data.time); 
 
 
 }

@@ -187,3 +187,55 @@ path#unselected {
 rect#unselected {
   fill: #555555;
 }
+
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 150px;
+  height: auto;
+  padding: 5px;
+  background: #D8ECE9;
+  border: 0px;
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+div.tooltip p {
+    font-size: 12px;
+}
+  div.tooltip p#sub {
+    font-size: 10px;
+    font-style: italic;
+  }
+
+div#callouts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+div#callout {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: row;
+    min-width: 700px;
+    margin: 0px;
+
+}
+
+div#calloutLabels {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: row;
+  min-width: 700px;
+  margin: 0px 0px 50px 0px;
+}
+
+div#callout h1, div#callout h2,
+div#calloutLabels h1, div#calloutLabels h2 {
+  width: 150px;
+  text-align: center;
+}

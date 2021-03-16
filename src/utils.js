@@ -228,8 +228,6 @@ export function recalcNodeValues(data) {
 
   for (var [k, v] of Object.entries(data)) {
 
-    console.log(k, v);
-
     if (k === "links") {
       newData["links"] = v;
 
@@ -237,12 +235,10 @@ export function recalcNodeValues(data) {
         
         if (l.source.id === nodeCount) {
           newNodes.push(l.source);
-          console.log("source:", nodeCount, newNodes);
           nodeCount = nodeCount + 1;
         }
         if (l.target.id === nodeCount) {
           newNodes.push(l.target);
-          console.log("target", nodeCount, newNodes);
           nodeCount = nodeCount + 1;
         }
 
@@ -264,9 +260,48 @@ export function recalcNodeValues(data) {
   }
 
   newData["nodes"] = newNodes;
-  console.log("recalc data:", newData);
+
+  // test code commented out
+  // console.log("recalc data:", newData);
+
   return newData;
 
   }
 
+
+
+// create text for tooltips
+
+export function tooltipText(data) {
+
+  let percFormatted = (data.value * 100).toFixed(0);
+
+  if (data.id <= 3) {
+    return "<p> " +
+      percFormatted + "% of students start at a " +
+      data.name + "</p> ";
+  }
+  else if (data.id === 10) {
+    return "<p> " +
+      percFormatted + "% of students earn a bachelor's degree" +
+      "</p> ";
+  }
+  else if (data.id === 9) {
+    return "<p> " +
+      percFormatted + "% of students don't complete a bachelor's degree" +
+      " </p> ";
+  }
+  else if (data.id === 8) {
+    return "<p> " +
+      percFormatted + "% of students don't transfer" +
+      "</p> ";
+  }
+  else {
+    return "<p> " +
+      percFormatted + "% of students transfer to a " +
+      data.name + "</p> <p id='sub'> (they may transfer more than once) </p> ";
+  }
+
+  
+}
 
