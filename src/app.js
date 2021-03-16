@@ -1,5 +1,5 @@
 
-import { prepData, updateData } from './utils';
+import { prepData, updateData, recalcNodeValues } from './utils';
 import { select } from 'd3-selection';
 import {
   sankey, sankeyLinkHorizontal, sankeyJustify
@@ -134,14 +134,14 @@ function buildFilters(data) {
 
 function updateSankey(data) {
 
-  let graph = sankey()
+  let myVis = sankey()
     .nodeWidth(150)
     .nodePadding(2)
     .size([width, height])
     .nodeId(d => d.id)
     .nodeAlign(sankeyJustify);
 
-  graph = graph(data);
+  let graph = myVis(data);
 
   var t = transition()
     .duration(750);
@@ -169,6 +169,14 @@ function updateSankey(data) {
 
   link.exit().remove();
 
+  if (!data.nodes[0].y0) {
+
+    console.log("Null Found!");
+    let newData = recalcNodeValues(data);
+    data = { ...newData };
+    graph = myVis(data);
+  }
+
   let nodes = svg
     .selectAll("g .nodes")
     .join("g .nodes");
@@ -178,12 +186,6 @@ function updateSankey(data) {
     .data(graph.nodes,
       d => d.id)
     .classed("node", true);
-
-  if (!data.nodes[0].y0) {
-    console.log("Null Found!", graph);
-    return [];
-
-  }
 
 
   // add in the rectangles

@@ -170,10 +170,16 @@ export function prepData(data) {
           {
             "source": 8, "target": 10,
             "value": Number(row['non-transfer to graduates'])
-          }],
+        }],
 
-        "cost": Number(row['cost']),
-        "time": Number(row['time'])
+      "cost": Number(row['cost']),
+      "time": Number(row['time']),
+      "gradPerc": Number(row['non-transfer to graduates']) +
+        Number(row['4-year public to graduates']) +
+        Number(row['2-year public to graduates']) +
+        Number(row['private non-profit to graduates']) +
+        Number(row['for-profit to graduates'])
+
       };
 
       filters[filterIndex] = linkData;
@@ -205,6 +211,62 @@ export function updateData(data, selection) {
   updated['links'] = data[selection]['links'];
   updated['time'] = data[selection]['time'];
   updated['cost'] = data[selection]['cost'];
+  updated['gradPerc'] = data[selection]['gradPerc'];
 
   return updated;
 }
+
+
+// manually reestablishing node values from links
+
+export function recalcNodeValues(data) {
+
+  let newData = {};
+
+  let newNodes = [];
+  let nodeCount = 0;
+
+  for (var [k, v] of Object.entries(data)) {
+
+    console.log(k, v);
+
+    if (k === "links") {
+      newData["links"] = v;
+
+      for (var l of data["links"]){
+        
+        if (l.source.id === nodeCount) {
+          newNodes.push(l.source);
+          console.log("source:", nodeCount, newNodes);
+          nodeCount = nodeCount + 1;
+        }
+        if (l.target.id === nodeCount) {
+          newNodes.push(l.target);
+          console.log("target", nodeCount, newNodes);
+          nodeCount = nodeCount + 1;
+        }
+
+        if (nodeCount === 11) { break; }
+
+        };
+      }
+
+    else if (k === "time") {
+      newData["time"] = v;
+    }
+    else if (k === "cost") {
+      newData["cost"] = v;
+    }
+    else if (k === "gradPerc") {
+      newData["gradPerc"] = v;
+    }
+
+  }
+
+  newData["nodes"] = newNodes;
+  console.log("recalc data:", newData);
+  return newData;
+
+  }
+
+
