@@ -9,8 +9,8 @@ body {
   font-family: Gill Sans,'Gill Sans', 'Gill Sans MT',
       Calibri, 'Trebuchet MS', sans-serif;
   height: 100%;
-  margin: 0;
-  padding: 0;
+  margin: 0px;
+  padding: 0px 0px 1px 0px;
   width: 100%;
 }
 
@@ -26,12 +26,15 @@ div.header, div.footer {
 
 }
 
+  .octicon path {
+    fill: black;
+  }
+
 div.intro {
   display: flex;
   justify-content: center;
   justify-items: center;
   flex-direction: row;
-  
 }
 
 div.footerText {
@@ -44,6 +47,7 @@ div.footerText {
 
 div.footer h2 {
   margin-top: 10px;
+  margin-bottom: 0px;
   font-weight: bold;
 }
 
@@ -66,10 +70,19 @@ h2 {
   font-weight: normal;
 }
 
+h3 {
+  margin: 0px 10px 10px 10px;
+  font-size: 18px;
+  font-weight: 600;
+
+}
+
+
   h2.title {
     margin-top: 10px;
     font-style: normal;
     font-weight: bold;
+    font-size: 18px;
   }
 
 p {
@@ -89,7 +102,7 @@ div#app {
     justify-content: center;
     align-content:center;
     align-items: center;
-    margin: 50px, 25px;
+    margin: 20px, 25px;
 }
 
 div#filters {
@@ -99,10 +112,11 @@ div#filters {
   align-content: center;
   align-items: center;
   margin: 0px;
+  overflow: hidden;
 }
 
   div#filters div div {
-    padding: 10px;
+    padding: 5px;
     margin: 5px;
     background-color: #DBC7DA;
   }
@@ -112,10 +126,87 @@ div#filters {
     fill: white;
 }
 
+.hidden {
+  display: none;
+}
+
+
 path {
   stroke-opacity: 0.35;
   fill: none;
 }
+
+
+
+#scrolly {
+  position: relative;
+  background-color: #f3f3f3;
+  padding: 1rem;
+}
+
+article {
+  position: relative;
+  padding: 0;
+  max-width: 75%;
+  margin: 0 auto;
+}
+
+figure {
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  background-color: #8a8a8a;
+  z-index: 1;
+
+}
+
+  figure p {
+    text-align: center;
+    padding: 1rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    font-size: 8rem;
+    font-weight: 900;
+    color: #fff;
+  }
+
+.step {
+  margin: 0 auto 2rem auto;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+div.step {
+  width: 85%;
+  z-index: 0;
+}
+
+  .step:last-child {
+    margin-bottom: 0;
+  }
+
+  .step.is-active p {
+    background-color: goldenrod;
+    color: #3b3b3b;
+  }
+
+  .step p {
+    text-align: center;
+    padding: 1rem;
+    font-size: 1.5rem;
+    background-color: #3b3b3b;
+  }
+
+
 
   path#fp {
     stroke: #469890;
@@ -198,6 +289,7 @@ div.tooltip {
   border: 0px;
   border-radius: 2px;
   pointer-events: none;
+  z-index: 2;
 }
 
 div.tooltip p {
@@ -222,6 +314,7 @@ div#callout {
     flex-direction: row;
     min-width: 700px;
     margin: 0px;
+    height: 35px;
 
 }
 
@@ -231,7 +324,8 @@ div#calloutLabels {
   align-items: center;
   flex-direction: row;
   min-width: 700px;
-  margin: 0px 0px 50px 0px;
+  margin: 0px 0px 5px 0px;
+  height: 25px;
 }
 
 div#callout h1, div#callout h2,
@@ -239,3 +333,5 @@ div#calloutLabels h1, div#calloutLabels h2 {
   width: 150px;
   text-align: center;
 }
+
+

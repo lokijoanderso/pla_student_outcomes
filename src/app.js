@@ -10,20 +10,24 @@ import {
 } from 'd3-sankey';
 import { json, csv } from 'd3-fetch';
 import { transition } from 'd3-transition';
+import 'intersection-observer';
+import scrollama from 'scrollama';
+import 'stickyfill';
 
+
+// imports the css file
+
+import './main.css';
 
 // data sources
 
 const RATE_DATA = './data/plaNodes_demog.csv';
-
-// default starting selection
-
-let currentSelect = 'anaaaa';
+let FILTER_DATA = {};
 
 // menu indices for changing selection
 
 const MENU_ORDER = {
-  "school": 0,
+  "college": 0,
   "pla": 1,
   "age": 2,
   "race": 3,
@@ -31,14 +35,17 @@ const MENU_ORDER = {
   "income": 5,
 };
 
-// this command imports the css file, if you remove it your css wont be applied!
+let MENU_OPTS = {};
 
-import './main.css';
+
+// default starting selection
+
+let currentSelect = 'anaaaa';
 
 
 // set the dimensions and margins of the graph
 
-const margin = { top: 10, right: 10, bottom: 10, left: 10 },
+const margin = { top: 10, right: 10, bottom: 0, left: 10 },
   width = 650 - margin.left - margin.right,
   height = 500 - margin.top - margin.bottom;
 
@@ -64,17 +71,115 @@ svg.append("g")
 svg.append("g")
   .classed("labels", true);
 
+
 // import data for sankey rates
 
 csv(RATE_DATA)
   .then(data => {
 
-    let filterData = buildFilters(data);
-    let selectedData = updateData(filterData, currentSelect);
+    [MENU_OPTS, FILTER_DATA] = prepData(data);
+    let selectedData = buildFilters(data);
 
     // add sankey nodes and links
 
     updateSankey(selectedData);
+
+    // initially hide filter options
+
+    select("#filters")
+      .style("opacity", 0)
+      .style("height", "0px")
+      .classed("hidden", true);
+
+    // scrollama set up for triggers
+    // using d3 for convenience
+
+    var scrolly = select("#scrolly");
+    var figure = scrolly.select("figure");
+    var article = scrolly.select("article");
+    var step = article.selectAll(".step");
+
+    // initialize the scrollama
+    var scroller = scrollama();
+
+    // generic window resize listener event
+    function handleResize() {
+      // 1. update height of step elements
+      //var stepH = Math.floor(window.innerHeight * 0.75);
+      //step.style("height", stepH + "px");
+
+      //var figureHeight = window.innerHeight / 2;
+      //var figureMarginTop = (window.innerHeight - figureHeight) / 2;
+
+      var stepH = 850;
+      step.style("height", stepH + "px");
+
+      var figureHeight = 600;
+      var figureMarginTop = 150;
+
+      figure
+        .style("height", figureHeight + "px")
+        .style("top", figureMarginTop + "px");
+
+      // 3. tell scrollama to update new element dimensions
+      scroller.resize();
+    }
+
+    // scrollama event handlers
+    function handleStepEnter(response) {
+      console.log(response);
+      // response = { element, direction, index }
+
+      // add color to current step only
+      step.classed("is-active", function (d, i) {
+        return i === response.index;
+      });
+
+      // update graphic based on step
+      figure.select("p").text(response.index + 1);
+
+      // function to change chart
+
+      setVisForStep(response.index + 1, response.direction);
+
+    }
+
+    function setupStickyfill() {
+      step.selectAll(".sticky").each(function () {
+        Stickyfill.add(this);
+      });
+    }
+
+    function init() {
+      setupStickyfill();
+
+      // 1. force a resize on load to ensure proper dimensions are sent to scrollama
+      handleResize();
+
+      // 2. setup the scroller passing options
+      // 		this will also initialize trigger observations
+      // 3. bind scrollama event handlers (this can be chained like below)
+      scroller
+        .setup({
+          step: "#scrolly article .step",
+          offset: 0.20,
+          debug: true
+        })
+        .onStepEnter(handleStepEnter);
+
+      // setup resize event
+      window.addEventListener("resize", handleResize);
+    }
+
+    // kick things off
+    init();
+
+
+
+
+
+
+
 
   })
   .catch(e => {
@@ -87,13 +192,13 @@ csv(RATE_DATA)
 
 function buildFilters(data) {
 
-  const [menus, filters] = prepData(data);
+  let newData = updateData(FILTER_DATA, currentSelect);
 
   let menuBar = select("#filters")
     .append("div")
     .style('display', 'flex')
     .selectAll('.dropDown')
-    .data(d => Object.keys(menus))
+    .data(d => Object.keys(MENU_OPTS))
     .join('div');
 
   menuBar.append('div').text(d => d);
@@ -112,26 +217,21 @@ function buildFilters(data) {
 
       currentSelect = newSelect;
 
-      let newData = updateData(filters, newSelect);
+      let newData = updateData(FILTER_DATA, newSelect);
       updateSankey(newData);
 
-      // test code commented out
-      // console.log(newData);
-      //console.log(newSelect);
+      // test code commented out 
       console.log(event.target.value, row);
 
     })
     .selectAll('option')
-    .data(d => menus[d])
+    .data(d => MENU_OPTS[d])
     .join('option')
     .text(d => d)
     .attr('value', d => d);
 
-  // test code commented out
-  // console.log(menus);
-  // console.log(filters); 
 
-  return filters;
+  return newData;
 
 }
 
@@ -272,4 +372,42 @@ function updateSankey(data) {
 
 }
 
+function setVisForStep(step, direction) {
 
+  let filters = select("#filters");
+
+  if (step === 4) {
+
+    currentSelect = "anaaaa";
+
+    let selectedData = updateData(FILTER_DATA, currentSelect);
+
+    updateSankey(selectedData);
+
+    select("figure")
+      .style("height", "700px")  
+      .style("bottom", "50px");
+
+    filters
+      .classed("hidden", false)
+      .transition()
+      .duration(1000)
+      .style("opacity", 1)
+      .style("height", "100px");
+
+  }
+
+  if (step === 3) {
+
+    if (direction === "up") {
+
+      filters
+        .classed("hidden", false)
+        .transition()
+        .duration(1000)
+        .style("opacity", 0)
+        .style("height", "0px");
+    }
+
+  }
+}

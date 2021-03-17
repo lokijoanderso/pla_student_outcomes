@@ -2823,6 +2823,11 @@
   "resolved" "https://registry.yarnpkg.com/interpret/-/interpret-1.4.0.tgz"
   "version" "1.4.0"
 
+"intersection-observer@^0.12.0":
+  "integrity" "sha512-2Vkz8z46Dv401zTWudDGwO7KiGHNDkMv417T5ItcNYfmvHR/1qCTVBO9vwH8zZmQ0WkA/1ARwpysR9bsnop4NQ=="
+  "resolved" "https://registry.npmjs.org/intersection-observer/-/intersection-observer-0.12.0.tgz"
+  "version" "0.12.0"
+
 "invariant@^2.2.2":
   "integrity" "sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA=="
   "resolved" "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz"
@@ -4529,6 +4534,11 @@
     "ajv" "^6.12.5"
     "ajv-keywords" "^3.5.2"
 
+"scrollama@^2.2.1":
+  "integrity" "sha512-Wq880ZLa3G6YSDbV7Bg5thEggo20+UM9qFu9P9ZAZlPmTt/rhIroUNmsZYvO8C5Y0kLp4nwK8S2Zha+bbOFiYg=="
+  "resolved" "https://registry.npmjs.org/scrollama/-/scrollama-2.2.1.tgz"
+  "version" "2.2.1"
+
 "select-hose@^2.0.0":
   "integrity" "sha1-Yl2GWPhlr0Psliv8N2o3NZpJlMo="
   "resolved" "https://registry.yarnpkg.com/select-hose/-/select-hose-2.0.0.tgz"
@@ -4827,6 +4837,11 @@
   "integrity" "sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow="
   "resolved" "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz"
   "version" "1.5.0"
+
+"stickyfill@^1.1.1-strict":
+  "integrity" "sha512-sATIqk4FvUQqSEWAVVWHUJoH98cKQ5REqDl5y8/Ij5Yj7tCLv+Y2gj/ioMcYuvUbtPL8j4kWmPTARR6fiDJNgQ=="
+  "resolved" "https://registry.npmjs.org/stickyfill/-/stickyfill-1.1.1-strict.tgz"
+  "version" "1.1.1-strict"
 
 "strict-uri-encode@^1.0.0":
   "integrity" "sha1-J5siXfHVgrH1TmWt3UNS4Y+qBxM="
