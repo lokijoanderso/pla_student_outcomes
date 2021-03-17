@@ -163,7 +163,7 @@ csv(RATE_DATA)
         .setup({
           step: "#scrolly article .step",
           offset: 0.20,
-          debug: true
+          debug: false
         })
         .onStepEnter(handleStepEnter);
 
@@ -376,16 +376,145 @@ function setVisForStep(step, direction) {
 
   let filters = select("#filters");
 
-  if (step === 4) {
+  let rects = select("#app")
+    .select("svg")
+    .selectAll("rect");
+
+  let paths = select("#app")
+    .select("svg")
+    .selectAll("path");
+
+
+
+  if (step === 1) {
+
+    // change data
 
     currentSelect = "anaaaa";
 
     let selectedData = updateData(FILTER_DATA, currentSelect);
-
     updateSankey(selectedData);
 
+    // reset selection colors
+    rects
+      .attr("id", d => d.class);
+
+    paths
+      .attr("id", d => d.source.class);
+
+  }
+  else if (step === 2) {
+
+    // change selection colors
+
+    rects
+      .attr("id", d => {
+
+        if (d.index <= 3) {
+          return "selected";
+        }
+        else { return "unselected"; }
+      });
+
+    paths
+      .attr("id", "unselected");
+
+  }
+
+  else if (step === 3) {
+
+
+    // change selection colors
+
+    rects
+      .attr("id", d => {
+
+        if (d.index <= 7 && d.index >= 4) {
+          return "selected";
+        }
+        else { return "unselected"; }
+      });
+
+    paths
+      .attr("id", d => {
+
+        if (d.source.index <= 3 &&
+          d.target.index <= 7 &&
+          d.target.index >= 4) {
+          return "selected";
+        }
+        else { return "unselected"; }
+      });
+
+  }
+  else if (step === 4) {
+
+
+    // change selection colors
+
+    rects
+      .attr("id", d => {
+
+        if (d.index === 8) {
+          return "selected";
+        }
+        else { return "unselected"; }
+      });
+
+    paths
+      .attr("id", d => {
+
+        if ( d.target.index === 8) {
+          return "selected";
+        }
+        else { return "unselected"; }
+      });
+
+  }
+  else if (step === 5) {
+
+
+    // change selection colors
+
+    rects
+      .attr("id", d => {
+
+        if (d.index === 10) {
+          return "selected";
+        }
+        else { return "unselected"; }
+      });
+
+    paths
+      .attr("id", d => {
+
+        if (d.target.index === 10) {
+          return "selected";
+        }
+        else { return "unselected"; }
+      });
+  }
+
+  else if (step === 10) {
+
+    if (direction === "up") {
+
+  filters
+    .classed("hidden", false)
+   .transition()
+    .duration(1000)
+    .style("opacity", 0)
+    .style("height", "0px");
+}
+
+  }
+
+  else if (step === 11) {
+
+    resetDropDowns();
+
     select("figure")
-      .style("height", "700px")  
+      .style("height", "700px")
       .style("bottom", "50px");
 
     filters
@@ -395,19 +524,39 @@ function setVisForStep(step, direction) {
       .style("opacity", 1)
       .style("height", "100px");
 
-  }
-
-  if (step === 3) {
-
-    if (direction === "up") {
-
-      filters
-        .classed("hidden", false)
-        .transition()
-        .duration(1000)
-        .style("opacity", 0)
-        .style("height", "0px");
-    }
+    rects
+      .attr("id", d => d.class);
+    paths
+      .attr("id", d => d.source.class);
 
   }
+
 }
+
+// to place in step immediately before end
+//if (direction === "up") {
+
+//  filters
+//    .classed("hidden", false)
+//    .transition()
+//    .duration(1000)
+//    .style("opacity", 0)
+//    .style("height", "0px");
+//}
+
+
+// set diagram and dropdown selects back to defaults
+
+function resetDropDowns() {
+
+  currentSelect = "anaaaa";
+
+  let selectedData = updateData(FILTER_DATA, currentSelect);
+
+  updateSankey(selectedData);
+
+  select("#filters")
+    .selectAll("select")
+    .each(function () { this.selectedIndex = 0 })
+}
+
