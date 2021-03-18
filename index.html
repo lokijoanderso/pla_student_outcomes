@@ -6,19 +6,22 @@
   </head>
   <body>
       <div class="header">
-          <a href="https://github.com/lokijoanderso/pla_student_outcomes">
-              <svg class="octicon"
-                   height="32" viewBox="0 0 16 16" version="1.1" width="32"
-                   aria-hidden="true">
-                  <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29
+          <div id="topOpts">
+              <p><a href="#footer">explore freely</a></p>
+              <a href="https://github.com/lokijoanderso/pla_student_outcomes">
+                  <svg class="octicon"
+                       height="32" viewBox="0 0 16 16" version="1.1" width="32"
+                       aria-hidden="true">
+                      <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29
                 6.53 5.47 7.59.4.07.55-.17.55-.38
                 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58
                 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12
                 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82
                 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0
                 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-              </svg>
-          </a>
+                  </svg>
+              </a>
+          </div>
           <h1>Prior Learning Assessment (PLA)</h1>
           <h2>
               Improving student outcomes by honoring
@@ -71,28 +74,30 @@
       </div>
 
       <section id="scrolly">
-          <figure>
-              <p>0</p>
 
-              <div id="chart">
-                  <div class="titles">
-                      <h3>some kinda title... possibly dynamic... coming soon!</h3>
-                  </div>
-                  <div id="filters"></div>
-                  <div id="app"></div>
-                  <div id="callouts">
-                      <div id="callout">
-                          <h1 class="grad"></h1>
-                          <h1 class="cost"></h1>
-                          <h1 class="time"></h1>
+          <figure>
+              <!--<p>0</p>-->
+
+                  <div id="chart">
+                      <div id="titles">
+                          <h3>some kinda title... possibly dynamic... coming soon!</h3>
                       </div>
-                      <div id="calloutLabels">
-                          <h2 class="gradLabel">graduation rate</h2>
-                          <h2 class="costLabel">average total cost</h2>
-                          <h2 class="timeLabel">years</h2>
+                      <div id="filters"></div>
+                      <div id="app"></div>
+                      <div id="callouts">
+                          <div id="callout">
+                              <h1 class="rate"></h1>
+                              <h1 class="cost"></h1>
+                              <h1 class="time"></h1>
+                          </div>
+                          <div id="calloutLabels">
+                              <h2 class="gradLabel">graduation rate</h2>
+                              <h2 class="costLabel">average total cost</h2>
+                              <h2 class="timeLabel">years</h2>
+                          </div>
                       </div>
                   </div>
-              </div>
+         
 
           </figure>
 
@@ -124,8 +129,8 @@
               </div>
               <div class="step" data-step="5">
                   <p>
-                      Finally, about half of the students that
-                      begin college end up with a Bachelor's Degree.
+                      Finally, less than half of the students that
+                      begin college in the US end up with a Bachelor's Degree.
                   </p>
               </div>
               <div class="step" data-step="6">
@@ -133,41 +138,84 @@
                       The proportion of students that earn a
                       Bachelor's Degree varies a lot depending
                       on the type of school.
-                  </p>
-              </div>
-              <div class="step" data-step="7">
-                  <p>
+                      <br /><br />
                       The highest graduation rates are at
-                      private non-profit universities.
-                  </p>
-              </div>
-
-              <div class="step" data-step="7">
-                  <p>
-                      The lowest are at public two year colleges, 
+                      private nonprofit universities.
+                      <br /><br />
+                      The lowest are at public two year colleges,
                       where students usually must
                       transfer before they can complete
                       a four year degree.
                   </p>
               </div>
+              <div class="step" data-step="7">
+                  <p>
+                      The exciting part about PLA credit is
+                      that research suggests it can dramatically
+                      raise these rates.
+                      <br /><br />
+                      A large 2019 study says it raises graduation rates
+                      by an average of 17 points.
+                      <br /><br />
+                      It also reduces the average time and cost
+                      of a degree because PLA credits are free or
+                      very inexpensive compared to tuition.
+                  </p>
+              </div>
+
               <div class="step" data-step="8">
                   <p>
-                      The exciting part about PLA credit is that research
-                      suggests it can dramatically raise
-                      these rates.
+                      Research suggests PLA is particularly impactful for
+                      some groups with low graduation rates.
+                      <br /><br />
+                      Like older students.
                   </p>
               </div>
               <div class="step" data-step="9">
                   <p>
-                      Findings say it raises graduation rates by an average
-                      of 17 points, but impacts are even greater for some
-                       groups, like public two-year students.
+                      Low income students.
+                  </p>
+              </div>
+              <div class="step" data-step="10">
+                  <p>
+                      Latinx / Hispanic students.
+                  </p>
+              </div>
+              <div class="step" data-step="11">
+                  <p>
+                      And students at two year colleges.
+                  </p>
+              </div>
+              <div class="step" data-step="12">
+                  <p>
+                      As of 2018, 48% of US schools grant PLA.
+                      <br /><br />
+                      PLA policy is largely driven by individual colleges though.
+                      <br /><br />
+                      For-profit and two-year colleges are the most likely
+                      and four-year public and private universities are
+                      the least likely to allow it.
+                      <br /><br />
+                      This poses a big problem for transfer students,
+                      who may lose the advantage of their PLA credits
+                      if the receiving school won’t recognize them.
+                  </p>
+              </div>
+              <div class="step" data-step="13">
+                  <p>
+                      PLA is worth collecting better data about,
+                      researching and expanding further.
+                      <br /><br />
+                      Especially if statewide articulation agreements
+                      can be put in place to protect student academic progress
+                      when they transfer.
                   </p>
               </div>
 
-
-              <div class="step" data-step="100">
-                  <p>Explore the PLA chart on your own!</p>
+              <div class="step" data-step="14">
+                  <p>Curious? Explore the PLA chart on your own!</p>
+              </div>
+              <div class="step" data-step="15">
               </div>
           </article>
       </section>
@@ -214,12 +262,15 @@
                   video posted to uChicago Panopto on 2/25/2021.
               </p>
               <p>
-                  scrollama sticky demo
-                  https://russellgoldenberg.github.io/scrollama/sticky-overlay
+                  Russell Goldenberg (2021)
+                  <a href="https://russellgoldenberg.github.io/scrollama/sticky-overlay"
+                     target="_blank">scrollama sticky overlay</a>
+                  &amp; <a href="https://russellgoldenberg.github.io/scrollama/progress"
+                           target="_blank">progress</a> examples documentation.
+                  
               </p>
               <p>
-                  animating display none
-                  https://www.impressivewebs.com/animate-display-block-none/
+                  
               </p>
               <br />
               <p>
@@ -232,6 +283,8 @@
               </p>
           </div>
       </div>
+
+      <div id="tooltip"></div>
 
       <script src="bundle.js"></script>
   </body>

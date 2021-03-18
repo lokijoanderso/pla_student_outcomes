@@ -2,7 +2,8 @@
 import {
   prepData, updateData,
   recalcNodeValues,
-  tooltipText
+  tooltipText,
+  makeTitleText
 } from './utils';
 import { select } from 'd3-selection';
 import {
@@ -46,7 +47,7 @@ let currentSelect = 'anaaaa';
 // set the dimensions and margins of the graph
 
 const margin = { top: 10, right: 10, bottom: 0, left: 10 },
-  width = 650 - margin.left - margin.right,
+  width = 800 - margin.left - margin.right,
   height = 500 - margin.top - margin.bottom;
 
 
@@ -111,8 +112,23 @@ csv(RATE_DATA)
       //var figureHeight = window.innerHeight / 2;
       //var figureMarginTop = (window.innerHeight - figureHeight) / 2;
 
-      var stepH = 850;
-      step.style("height", stepH + "px");
+      var stepH = 500;
+      var shortH = 200;
+      var lastStepH = 700;
+
+      let shortSteps = [8, 9, 10, 11, 14];
+
+      step.style("height", (d, i) => {
+
+        if ((i + 1) === 15) {
+          return lastStepH + "px";
+        }
+        else if (shortSteps.includes((i + 1))) {
+          return shortH + "px";
+        }
+
+        return stepH + "px";
+      });
 
       var figureHeight = 600;
       var figureMarginTop = 150;
@@ -122,25 +138,35 @@ csv(RATE_DATA)
         .style("top", figureMarginTop + "px");
 
       // 3. tell scrollama to update new element dimensions
+
       scroller.resize();
     }
 
     // scrollama event handlers
-    function handleStepEnter(response) {
-      console.log(response);
-      // response = { element, direction, index }
 
-      // add color to current step only
-      step.classed("is-active", function (d, i) {
-        return i === response.index;
-      });
+    function handleStepProgress(response) {
 
-      // update graphic based on step
-      figure.select("p").text(response.index + 1);
+      // console.log(response);
+
+      var el = select(response.element);
+      var classes = el.attr("class");
+
+      if (classes === "step") {
+
+        // add color to current step only
+
+        step.classed("is-active", function (d, i) {
+          return i === response.index;
+        });
+
+        // figure.select("p").text(response.index + 1);
+
+      }
 
       // function to change chart
 
-      setVisForStep(response.index + 1, response.direction);
+      setVisForStep(response.index + 1,
+        response.progress);
 
     }
 
@@ -150,35 +176,34 @@ csv(RATE_DATA)
       });
     }
 
+
     function init() {
       setupStickyfill();
 
       // 1. force a resize on load to ensure proper dimensions are sent to scrollama
+
       handleResize();
 
       // 2. setup the scroller passing options
       // 		this will also initialize trigger observations
       // 3. bind scrollama event handlers (this can be chained like below)
+
       scroller
         .setup({
           step: "#scrolly article .step",
-          offset: 0.20,
-          debug: false
+          offset: .2,
+          debug: false,
+          progress: true
         })
-        .onStepEnter(handleStepEnter);
+        .onStepProgress(handleStepProgress);
 
       // setup resize event
+
       window.addEventListener("resize", handleResize);
     }
 
     // kick things off
     init();
-
-
-
-
-
-
 
 
   })
@@ -196,9 +221,20 @@ function buildFilters(data) {
 
   let menuBar = select("#filters")
     .append("div")
+    .classed("menuBox", true)
     .style('display', 'flex')
     .selectAll('.dropDown')
     .data(d => Object.keys(MENU_OPTS))
+    .join('div');
+
+  select(".menuBox")
+    .append("div")
+    .attr("class", "resetBox")
+    .append("button")
+    .text("reset")
+    .attr("id", "reset")
+    .on("click", function () { resetDropDowns() })
+    .join("button")
     .join('div');
 
   menuBar.append('div').text(d => d);
@@ -242,14 +278,23 @@ function updateSankey(data) {
   let myVis = sankey()
     .nodeWidth(150)
     .nodePadding(2)
-    .size([width, height])
     .nodeId(d => d.id)
+    .size([width, height])
     .nodeAlign(sankeyJustify);
 
   let graph = myVis(data);
 
   var t = transition()
     .duration(750);
+
+  // div for the tooltip
+
+  var div = select("#tooltip");
+
+  div
+    .join()
+    .attr("id", "tooltip")
+    .style("opacity", 0);
 
   // add in the links 
   let links = svg
@@ -262,10 +307,9 @@ function updateSankey(data) {
 
   link.enter()
     .append("path")
-    .classed("link", true)
     .attr("d", sankeyLinkHorizontal())
     .attr("stroke-width", d => d.width)
-    .attr("id", d => d.source.class);
+    .attr("class", d => "link " + d.source.class);
 
     link
       .transition(t)
@@ -289,14 +333,7 @@ function updateSankey(data) {
   let node = nodes
     .selectAll("rect")
     .data(graph.nodes,
-      d => d.id)
-    .classed("node", true);
-
-  // div for the tooltip
-
-  var div = select("body").append("div")
-    .attr("class", "tooltip")
-    .style("opacity", 0);
+      d => d.id);
 
   // add in the rectangles
 
@@ -306,7 +343,8 @@ function updateSankey(data) {
     .attr("y", d => d.y0)
     .attr("width", d => d.x1 - d.x0)
     .attr("height", d => d.y1 - d.y0)
-    .attr("id", d => d.class)
+    .attr("id", d => d.id)
+    .attr("class", d => "node " + d.class)
     .on("mouseover", function (event, d) {
 
       div.transition()
@@ -327,7 +365,8 @@ function updateSankey(data) {
     .attr("x", d => d.x0)
     .attr("y", d => d.y0)
     .attr("width", d => d.x1 - d.x0)
-    .attr("height", d => d.y1 - d.y0);
+    .attr("height", d => d.y1 - d.y0)
+    .attr("id", d => d.id);
 
   node.exit().remove();
 
@@ -353,7 +392,7 @@ function updateSankey(data) {
 
   // update callout div with grad rate, etc
 
-  var ratesGrad = select(".grad")
+  var ratesGrad = select(".rate")
     .text("" + (data.gradPerc * 100).toFixed(0) + "%");
 
   var ratesCost = select(".cost")
@@ -361,8 +400,13 @@ function updateSankey(data) {
       .toLocaleString('en-US'));
 
   var ratesTime = select(".time")
-      .text("" + data.time.toFixed(1));
+    .text("" + data.time.toFixed(1));
 
+  // update the chart title
+
+  select("#titles")
+    .select("h3")
+    .text(makeTitleText(currentSelect));
 
 
   console.log("new grad rate:", data.gradPerc);
@@ -372,7 +416,7 @@ function updateSankey(data) {
 
 }
 
-function setVisForStep(step, direction) {
+function setVisForStep(step, progress) {
 
   let filters = select("#filters");
 
@@ -385,22 +429,18 @@ function setVisForStep(step, direction) {
     .selectAll("path");
 
 
-
   if (step === 1) {
 
-    // change data
-
-    currentSelect = "anaaaa";
-
-    let selectedData = updateData(FILTER_DATA, currentSelect);
-    updateSankey(selectedData);
+    if (currentSelect !== "anaaaa") {
+      resetDropDowns()
+    }
 
     // reset selection colors
     rects
-      .attr("id", d => d.class);
+      .attr("class", d => "node " + d.class);
 
     paths
-      .attr("id", d => d.source.class);
+      .attr("class", d => "link " + d.source.class);
 
   }
   else if (step === 2) {
@@ -408,16 +448,16 @@ function setVisForStep(step, direction) {
     // change selection colors
 
     rects
-      .attr("id", d => {
+      .attr("class", d => {
 
-        if (d.index <= 3) {
-          return "selected";
+        if (d.id <= 3) {
+          return "node selected";
         }
-        else { return "unselected"; }
+        else { return "node unselected"; }
       });
 
     paths
-      .attr("id", "unselected");
+      .attr("class", "link unselected");
 
   }
 
@@ -427,91 +467,442 @@ function setVisForStep(step, direction) {
     // change selection colors
 
     rects
-      .attr("id", d => {
+      .attr("class", d => {
 
-        if (d.index <= 7 && d.index >= 4) {
-          return "selected";
+        if (d.id <= 7 && d.id >= 4) {
+          return "node selected";
         }
-        else { return "unselected"; }
+        else { return "node unselected"; }
       });
 
     paths
-      .attr("id", d => {
+      .attr("class", d => {
 
-        if (d.source.index <= 3 &&
-          d.target.index <= 7 &&
-          d.target.index >= 4) {
-          return "selected";
+        if (d.source.id <= 3 &&
+          d.target.id <= 7 &&
+          d.target.id >= 4) {
+          return "link selected";
         }
-        else { return "unselected"; }
+        else { return "link unselected"; }
       });
 
   }
   else if (step === 4) {
 
-
     // change selection colors
 
     rects
-      .attr("id", d => {
+      .attr("class", d => {
 
-        if (d.index === 8) {
-          return "selected";
+        if (d.id === 8) {
+          return "node selected";
         }
-        else { return "unselected"; }
+        else { return "node unselected"; }
       });
 
     paths
-      .attr("id", d => {
+      .attr("class", d => {
 
-        if ( d.target.index === 8) {
-          return "selected";
+        if (d.target.id === 8) {
+          return "link selected";
         }
-        else { return "unselected"; }
+        else { return "link unselected"; }
       });
 
   }
   else if (step === 5) {
 
+    // change selection colors
+
+    rects
+      .attr("class", d => {
+
+        if (d.id === 10) {
+          return "node selected";
+        }
+        else { return "node unselected"; }
+      });
+
+    paths
+      .attr("class", d => {
+
+        if (d.target.id === 10) {
+          return "link selected";
+        }
+        else { return "link unselected"; }
+      });
+  }
+
+  else if (step === 6) {
+
+    let pv_rate = updateData(FILTER_DATA, "pnaaaa");
+    let cc_rate = updateData(FILTER_DATA, "2naaaa");
+
+    // reset data
+
+    if (progress < 0.2 &&
+      currentSelect !== "anaaaa") {
+      resetDropDowns();
+    }
 
     // change selection colors
 
     rects
-      .attr("id", d => {
+      .attr("class", d => {
 
-        if (d.index === 10) {
-          return "selected";
+        if (d.id === 10 ||
+          d.id <= 3) {
+          return "node selected";
         }
-        else { return "unselected"; }
+        else { return "node unselected"; }
       });
 
     paths
-      .attr("id", d => {
+      .attr("class", d => "link unselected");
 
-        if (d.target.index === 10) {
-          return "selected";
-        }
-        else { return "unselected"; }
-      });
+    if (progress >= 0.20 &&
+      currentSelect !== "2naaaa") {
+
+      currentSelect = "pnaaaa";
+      updateSankey(pv_rate);
+
+      setTimeout(function () {
+
+        currentSelect = "2naaaa";
+        updateSankey(cc_rate);
+
+      }, 3500)
+    }
   }
 
+  else if (step === 7) {
+
+    let pla1 = updateData(FILTER_DATA, "anaaaa");
+    let pla2 = updateData(FILTER_DATA, "alaaaa");
+
+    // revert data 
+
+    if (progress < 0.20 &&
+      currentSelect !== "anaaaa") {
+      resetDropDowns();
+    }
+
+    // change selection colors
+
+    rects
+      .attr("class", d => {
+
+        if (d.id === 10) {
+          return "node selected";
+        }
+        else { return "node unselected"; }
+      });
+
+    paths
+      .attr("class", "link unselected");
+
+    // animate impact of pla
+
+    if (progress >= 0.20 &&
+      currentSelect !== "alaaaa") {
+      currentSelect = "anaaaa";
+      updateSankey(pla1);
+
+      setTimeout(function () {
+        currentSelect = "alaaaa";
+        updateSankey(pla2);
+      }, 3500);
+    }
+  }
+  else if (step === 8) {
+
+    let old1 = updateData(FILTER_DATA, "anoaaa");
+    let old2 = updateData(FILTER_DATA, "aloaaa");
+
+
+    // change selection colors
+
+    rects
+      .attr("class", d => {
+        if (d.id === 10) {
+          return "node selected";
+        }
+        else { return "node unselected"; }
+      });
+
+    paths
+      .attr("class", "link unselected");
+
+    if (progress < 0.5 &&
+      currentSelect !== "anaaaa") {
+      resetDropDowns();
+    }
+
+    if (progress >= 0.5 &&
+      currentSelect !== "aloaaa") {
+      currentSelect = "anoaaa";
+      updateSankey(old1);
+
+      setTimeout(function () {
+        currentSelect = "aloaaa";
+        updateSankey(old2);
+      }, 3000);
+    }
+  }
+  else if (step === 9) {
+
+    let inc1 = updateData(FILTER_DATA, "anaaal");
+    let inc2 = updateData(FILTER_DATA, "alaaal");
+
+    // change selection colors
+
+    rects
+      .attr("class", d => {
+        if (d.id === 10) {
+          return "node selected";
+        }
+        else { return "node unselected"; }
+      });
+
+    paths
+      .attr("class", "link unselected");
+
+    if (progress >= 0.5 &&
+      currentSelect !== "alaaal") {
+      currentSelect = "anaaal";
+      updateSankey(inc1);
+
+      setTimeout(function () {
+        currentSelect = "alaaal";
+        updateSankey(inc2);
+      }, 3000);
+    }
+  }
   else if (step === 10) {
 
-    if (direction === "up") {
+    let hisp1 = updateData(FILTER_DATA, "anaHaa");
+    let hisp2 = updateData(FILTER_DATA, "alaHaa");
 
-  filters
-    .classed("hidden", false)
-   .transition()
-    .duration(1000)
-    .style("opacity", 0)
-    .style("height", "0px");
-}
+    // change selection colors
+
+    rects
+      .attr("class", d => {
+        if (d.id === 10) {
+          return "node selected";
+        }
+        else { return "node unselected"; }
+      });
+
+    paths
+      .attr("class", "link unselected");
+  
+    if (progress >= 0.5 &&
+      currentSelect !== "alaHaa") {
+    currentSelect = "anaHaa";
+    updateSankey(hisp1);
+
+    setTimeout(function () {
+      currentSelect = "alaHaa";
+      updateSankey(hisp2);
+    }, 3000);
+  }
+  }
+  else if (step === 11) {
+
+    let cc1 = updateData(FILTER_DATA, "2naaaa");
+    let cc2 = updateData(FILTER_DATA, "2laaaa");
+
+    // change selection colors
+
+    rects
+      .attr("class", d => {
+        if (d.id === 10) {
+          return "node selected";
+        }
+        else { return "node unselected"; }
+      });
+
+    paths
+      .attr("class", "link unselected");
+
+    if (progress >= 0.5 &&
+      currentSelect !== "2laaaa") {
+      currentSelect = "2naaaa";
+      updateSankey(cc1);
+
+      setTimeout(function () {
+        currentSelect = "2laaaa";
+        updateSankey(cc2);
+      }, 3000)
+    }
+  }
+
+  else if (step === 12) {
+
+    // funky selection combos for later
+
+    var selectRects1 = [0, 2, 5, 7];
+    var selectRects2 = [0, 2, 5, 7, 10];
+    var selectPaths0 = [0, 2];
+    var selectPaths1 = selectRects1;
+    var selectPaths2 = [5, 7, 10];
+
+    // progress triggers
+
+    if (progress <= 0.45 &&
+      currentSelect !== "anaaaa") {
+      resetDropDowns();
+    }
+
+    if (progress < 0.15) {
+
+      // reset colors
+
+      rects
+        .attr("class", d => "node " + d.class);
+      paths
+        .attr("class", d => "link " + d.source.class);
+    }
+
+    if (progress >= 0.15 && progress < 0.25) {
+
+      // change selection colors 
+
+      rects
+        .attr("class", d => {
+
+          if (d.id === 0 ||
+            d.id === 2) {
+            return "node selected";
+          }
+          else { return "node unselected"; }
+        });
+
+      paths
+        .attr("class", "link unselected");
+
+    }
+    if (progress >= 0.25 && progress < 0.35) {
+
+      // change selection colors
+
+      rects
+        .transition()
+        .duration(500)
+        .attr("class", d => {
+
+          if (selectRects1.includes(d.id)) {
+            return "node selected";
+          }
+          else { return "node unselected"; }
+        });
+
+      paths
+        .transition()
+        .duration(500)
+        .attr("class", d => {
+
+          if (selectPaths0.includes(d.source.id) &&
+             selectPaths1.includes(d.target.id)) {
+            return "link selected";
+          }
+          else { return "link unselected"; }
+        });
+
+    }
+    if (progress >= 0.35 && progress < 0.45) {
+
+      // change selection colors
+
+      rects
+        .transition()
+        .duration(500)
+        .attr("class", d => {
+
+          if (selectRects2.includes(d.id)) {
+            return "node selected";
+          }
+          else { return "node unselected"; }
+        });
+
+      paths
+        .transition()
+        .duration(500)
+        .attr("class", d => {
+
+          if (selectPaths1.includes(d.source.id) &&
+              selectPaths2.includes(d.target.id)) {
+            return "link selected";
+          }
+          else { return "link unselected"; }
+        });
+
+    }
+
+    if (progress >= 0.45) {
+
+      if (currentSelect !== "alaaaa") {
+        currentSelect = "alaaaa";
+        let selectedData = updateData(FILTER_DATA, currentSelect);
+        updateSankey(selectedData);
+      }
+    
+        rects
+          .attr("class", d => {
+
+            if (selectRects2.includes(d.id)) {
+              return "node selected";
+            }
+            else { return "node unselected"; }
+          });
+
+        paths
+          .attr("class", d => {
+
+            if (selectPaths1.includes(d.source.id) &&
+              selectPaths2.includes(d.target.id)) {
+              return "link selected";
+            }
+            else { return "link unselected"; }
+          });
+
+      }
+
+    }
+
+  else if (step === 13) {
+
+    // collapsing filters incase of up-scrolling
+
+      filters
+        .classed("hidden", false)
+        .transition()
+        .duration(1000)
+        .style("opacity", 0)
+        .style("height", "0px");
+
+    
+    // select PLA data 
+
+    if (currentSelect !== "a1aaaa") {
+
+      currentSelect = "a1aaaa";
+      let selectedData = updateData(FILTER_DATA, currentSelect);
+      updateSankey(selectedData);
+
+    }
+
+    // reset colors
+
+    rects
+      .attr("class", d => "node " + d.class);
+    paths
+      .attr("class", d => "link " + d.source.class);
 
   }
 
-  else if (step === 11) {
-
-    resetDropDowns();
+  else if (step === 14 &&
+    progress >= 0.1) {
 
     select("figure")
       .style("height", "700px")
@@ -524,25 +915,17 @@ function setVisForStep(step, direction) {
       .style("opacity", 1)
       .style("height", "100px");
 
+    resetDropDowns();
+
     rects
-      .attr("id", d => d.class);
+      .attr("class", d => "node " + d.class);
     paths
-      .attr("id", d => d.source.class);
+      .attr("class", d => "link " + d.source.class);
 
   }
-
 }
 
-// to place in step immediately before end
-//if (direction === "up") {
 
-//  filters
-//    .classed("hidden", false)
-//    .transition()
-//    .duration(1000)
-//    .style("opacity", 0)
-//    .style("height", "0px");
-//}
 
 
 // set diagram and dropdown selects back to defaults

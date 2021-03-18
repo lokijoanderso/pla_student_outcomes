@@ -262,7 +262,7 @@ export function recalcNodeValues(data) {
   newData["nodes"] = newNodes;
 
   // test code commented out
-  // console.log("recalc data:", newData);
+  console.log("recalc data:", newData);
 
   return newData;
 
@@ -305,3 +305,72 @@ export function tooltipText(data) {
   
 }
 
+export function makeTitleText(currentSelection) {
+
+
+  let title = ["Estimated Four-Year Degree Outcomes for ",];
+
+  // mix and match bits
+  let opts = {
+    "default": "US Students",
+    "sa": "All ",
+    "s2": "Public 2-Year Students ",
+    "s4": "Public 4-Year Students ",
+    "sp": "Private Nonprofit Students ",
+    "sf": "For-Profit Students ",
+    "pl": "with PLA Credits",
+    "p1": "with over 15 PLA Credits",
+    "ao": "Students Older than 24 ",
+    "a1": "Students Between 18 and 24 ",
+    "rB": "Black Students ",
+    "rH": "Hispanic Students ",
+    "rW": "White Students ",
+    "gf": "Female Students ",
+    "gm": "Male Students ",
+    "il": "Lower Income Students ",
+    "im": "Higher Income Students "
+  };
+
+  if (currentSelection === "anaaaa") {
+
+    title.push(opts["sa"]);
+    title.push(opts["default"]);
+
+  }
+  else if (currentSelection.match(/a/gi).length === 4) {
+
+    let optMatch = {
+      0: "s",
+      2: "a",
+      3: "r",
+      4: "g",
+      5: "i"
+    };
+
+    for (var i = 0; i < 7; i++) {
+
+      if (i !== 1 &&
+        currentSelection.slice(i, i + 1) !== "a") {
+
+        title.push(opts[optMatch[i] +
+          currentSelection.slice(i, i + 1)])
+
+      }
+    }
+  }
+  else {
+    if (currentSelection.slice(0, 1) === "a" &&
+      currentSelection.slice(2, 6) === "aaaa") {
+      title.push(opts["sa"] + "Students ");
+    }
+    else {
+      title.push("Your Customized Demographic ");}
+  }
+
+  if (currentSelection.slice(1, 2) !== "n") {
+    title .push(opts["pl"])
+  }
+
+  return title.join("");
+
+}
