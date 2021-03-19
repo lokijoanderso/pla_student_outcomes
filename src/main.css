@@ -188,14 +188,17 @@ div#filters {
   align-items: center;
   margin: 0px;
   overflow: hidden;
-  
 }
 
   div#filters div div {
     padding: 5px;
     margin: 5px;
-    background-color: #DBC7DA;
+    
   }
+
+.menuBox {
+  background-color: #DBC7DA;
+}
 
   #reset {
       padding: 10px;

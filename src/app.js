@@ -875,8 +875,10 @@ function setVisForStep(step, direction) {
 
         replayButton
           .classed("hidden", false)
-          .attr("xlink:href", d => "#step" + step);
-
+          .attr("xlink:href", d => "#step" + step)
+          .on("click", function () {
+            stepFired(step, "reset");
+          });
       }, 6000);
     }
 
@@ -923,7 +925,10 @@ function setVisForStep(step, direction) {
 
         replayButton
           .classed("hidden", false)
-          .attr("xlink:href", d => "#step" + step);
+          .attr("xlink:href", d => "#step" + step)
+          .on("click", function () {
+            stepFired(step, "reset");
+          });
 
       }, 6500);
 
@@ -966,7 +971,10 @@ function setVisForStep(step, direction) {
 
           replayButton
             .classed("hidden", false)
-            .attr("xlink:href", d => "#step" + step);
+            .attr("xlink:href", d => "#step" + step)
+            .on("click", function () {
+              stepFired(step, "reset");
+            });
 
         }, 6500);
       }
@@ -1053,7 +1061,10 @@ function setVisForStep(step, direction) {
 
           replayButton
             .classed("hidden", false)
-            .attr("xlink:href", d => "#step" + step);
+            .attr("xlink:href", d => "#step" + step)
+            .on("click", function () {
+              stepFired(step, "reset");
+            });
 
         }, 6500);
       }
@@ -1183,7 +1194,10 @@ function setVisForStep(step, direction) {
 
         replayButton
           .classed("hidden", false)
-          .attr("xlink:href", d => "#step" + step);
+          .attr("xlink:href", d => "#step" + step)
+          .on("click", function () {
+            stepFired(step, "reset");
+          });
 
       }, 6000);
     }
