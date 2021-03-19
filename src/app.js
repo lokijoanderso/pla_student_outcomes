@@ -71,6 +71,7 @@ let history = {
 };
 
 let explore = select("#exploreLink");
+
 explore.on("click", function () {
 
   for (var i = 1; i < 14; i++) {
@@ -79,15 +80,25 @@ explore.on("click", function () {
 
 });
 
+let topLinks = select("#topOpts");
 
-//let returnTop = select("#toTop");
+topLinks
+  .selectAll("span")
+  .on("mouseover", d => {
+    console.log(event.target);
 
-//returnTop
-//  .on("click", function () {
-//    for (var i = 1; i < 16; i++) {
-//      stepFired(i, "reset");
-//    }
-//  });
+    select(event.currentTarget)
+      .select("path")
+      .style("fill", "#782E6D");
+  })
+  .on("mouseout", d => {
+    console.log(event.target);
+
+    select(event.currentTarget)
+      .select("path")
+      .style("fill", "black");
+  });
+
 
 // set the dimensions and margins of the graph
 

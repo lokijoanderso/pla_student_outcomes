@@ -50,8 +50,8 @@ div.footer {
     justify-content: space-around;
     align-content: center;
     width: 100%;
-    margin: 0px 100px;
-    padding: 0px 100px;
+    margin: 0px;
+    padding: 0px;
 }
 
 #topOpts a {
@@ -63,10 +63,6 @@ div.footer {
   fill: black;
   background-color: #D8ECE9;
 }
-
-  .icon path:hover {
-    fill: #782E6D;
-  }
 
 div.intro {
   display: flex;
