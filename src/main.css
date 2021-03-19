@@ -35,17 +35,37 @@ div.uplink {
   align-content: center;
   align-items: center;
   text-align: center;
-  padding: 10px 0px;
+  padding: 0px;
   background-color: white;
-  margin-top: 20px;
+  margin-top: 0px;
 }
 
 div.footer {
   margin-top: 50px;
 }
 
-  .octicon path {
-    fill: black;
+#topOpts {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: center;
+    width: 100%;
+    margin: 0px 100px;
+    padding: 0px 100px;
+}
+
+#topOpts a {
+    text-decoration:none;
+    margin: 0px 10px;
+}
+
+.icon path {
+  fill: black;
+  background-color: #D8ECE9;
+}
+
+  .icon path:hover {
+    fill: #782E6D;
   }
 
 div.intro {
@@ -79,7 +99,7 @@ div.text {
 
 
 h1 {
-    margin: 10px 10px 0px 10px;
+    margin: 30px 10px 0px 10px;
 }
 
 h2 {
@@ -101,20 +121,30 @@ h3 {
     font-size: 18px;
 }
 
-
-
-
-  h2.title {
-    margin-top: 25px;
-    font-style: normal;
-    font-weight: bold;
-    
-  }
-
 p {
   margin: 5px 10px 10px 10px;
   font-size: medium;
 }
+
+a {
+  color: #316D64;
+  text-decoration: none;
+}
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  a:visited {
+    color: #316D64;
+  }
+
+h2.title {
+  margin-top: 25px;
+  font-style: normal;
+  font-weight: bold;
+}
+  
 
 div.text p {
   margin: 5px 10px 15px 10px;
@@ -199,7 +229,7 @@ path {
 #scrolly {
   position: relative;
   background-color: white;
-  padding: 1rem;
+  padding: 0.75rem;
 }
 
 article {
@@ -213,7 +243,6 @@ figure {
   position: -webkit-sticky;
   position: sticky;
   left: 0;
-  width: 100%;
   margin: 0;
   -webkit-transform: translate3d(0, 0, 0);
   -moz-transform: translate3d(0, 0, 0);
@@ -245,12 +274,8 @@ figure p {
   flex-direction:column;
   justify-content: space-between;
 }
-.step h3{
-    color: #999999;
-    margin-bottom: 100px;
-}
 
-div#stepStart, div#explore {
+div#stepStart {
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -266,13 +291,17 @@ div#stepStart, div#explore {
     padding: 0px;
   }
 
-#stepStart p {
+#stepStart p, #stepStart a {
   text-align: center;
   padding: 10px;
   font-size: 24px;
   margin: 0px;
   color: #666666;
 
+}
+
+#stepStart a {
+    font-weight:600;
 }
 
 div.step {
@@ -436,5 +465,6 @@ div#changes h2 {
   font-size: 20px;
   width: 200px;
   text-align: center;
+  margin-top: 20px;
 }
 
