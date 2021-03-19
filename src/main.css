@@ -26,8 +26,22 @@ div.header, div.footer {
 
 }
 
+div.uplink {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  justify-items: center;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 10px 0px;
+  background-color: white;
+  margin-top: 20px;
+}
+
 div.footer {
-    margin-top: 50px;
+  margin-top: 50px;
 }
 
   .octicon path {
@@ -227,7 +241,13 @@ figure p {
 .step {
   margin: 0 auto 2rem auto;
   color: white;
-
+  display: flex;
+  flex-direction:column;
+  justify-content: space-between;
+}
+.step h3{
+    color: #999999;
+    margin-bottom: 100px;
 }
 
 div#stepStart, div#explore {

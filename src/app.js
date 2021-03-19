@@ -4,8 +4,7 @@ import {
   recalcNodeValues,
   tooltipText,
   makeTitleText,
-  renderSVG,
-  stepFired
+  renderSVG
 } from './utils';
 import { select } from 'd3-selection';
 import {
@@ -49,6 +48,47 @@ let currentCost = 0;
 let currentTime = 0;
 
 
+// disable scroll plays for jump to bottom link
+
+let history = {
+
+  1: false,
+  2: false,
+  3: false,
+  4: false,
+  5: false,
+  6: false,
+  7: false,
+  8: false,
+  9: false,
+  10: false,
+  11: false,
+  12: false,
+  13: false,
+  14: false,
+  15: false,
+
+};
+
+let explore = select("#exploreLink");
+explore.on("click", function () {
+
+  for (var i = 1; i < 14; i++) {
+    stepFired(i, "fire");
+  }
+
+});
+
+
+//let returnTop = select("#toTop");
+
+//returnTop
+//  .on("click", function () {
+//    for (var i = 1; i < 16; i++) {
+//      stepFired(i, "reset");
+//    }
+//  });
+
 // set the dimensions and margins of the graph
 
 const margin = { top: 10, right: 10, bottom: 0, left: 10 },
@@ -56,7 +96,7 @@ const margin = { top: 10, right: 10, bottom: 0, left: 10 },
   height = 500 - margin.top - margin.bottom;
 
 
-// append the svg object to the body of the page
+// append the svg objects to the body of the page
 
 let replayButton = select("#titles")
   .append("svg")
@@ -140,7 +180,7 @@ csv(RATE_DATA)
       var shortH = 200;
       var lastStepH = 700;
 
-      let shortSteps = [8, 9, 10, 11, 14];
+      let shortSteps = [14];
 
       step.style("height", (d, i) => {
 
@@ -182,17 +222,19 @@ csv(RATE_DATA)
         return i === response.index;
       });
 
-      if (classes === "step") {
+      // if it hasn't already played, play it!
 
-        // figure.select("p").text(response.index + 1);
+      if (!stepFired(response.index + 1, "get") ||
+        response.direction === "up") {
 
-      }
+        // function to change chart
 
-      // function to change chart
-
+        if (response.index < 13) {
+          stepFired(response.index + 1, "fire");
+        }
         setVisForStep(response.index + 1,
           response.direction);
-
+      }
     }
 
 
@@ -538,36 +580,49 @@ function setVisForStep(step, direction) {
     .select("svg")
     .selectAll("path");
 
-  replayButton
-    .classed("hidden", true);
+  function resetAll() {
 
-  if (step >= 1 && step < 6) {
+    // reset data
+
+    resetDropDowns()
+
+    // hide button
+
     replayButton
-      .classed("hidden", true);
-  }
+      .classed("hidden", true)
+      .attr("xlink:href", d => "#step1");
 
-  if (step < 15) {
+    // hide filters
 
     filters
       .classed("hidden", true)
       .style("opacity", 0)
       .style("height", "0px");
 
-  }
-
-
-  if (step === 1 ) {
-
-    if (currentSelect !== "anaaaa") {
-      resetDropDowns()
-    }
-
     // reset selection colors
+
     rects
       .attr("class", d => "node " + d.class);
 
     paths
       .attr("class", d => "link " + d.source.class);
+
+  }
+
+
+  if (step === 1 ) {
+
+    resetAll();
+
+    if (direction === "up") {
+      setTimeout(function () {
+        for (var i = 1; i < 15; i++) {
+          stepFired(i, "reset");
+        }
+      }, 1000)
+    }
+
+    stepFired(step, "reset");
 
   }
   else if (step === 2) {
@@ -586,10 +641,11 @@ function setVisForStep(step, direction) {
     paths
       .attr("class", "link unselected");
 
+    stepFired(step, "reset");
+
   }
 
   else if (step === 3 ) {
-
 
     // change selection colors
 
@@ -613,6 +669,7 @@ function setVisForStep(step, direction) {
         else { return "link unselected"; }
       });
 
+    stepFired(step, "reset");
   }
   else if (step === 4 ) {
 
@@ -636,6 +693,8 @@ function setVisForStep(step, direction) {
         else { return "link unselected"; }
       });
 
+    stepFired(step, "reset");
+
   }
   else if (step === 5 ) {
 
@@ -658,19 +717,16 @@ function setVisForStep(step, direction) {
         }
         else { return "link unselected"; }
       });
+
+    stepFired(step, "reset");
+
   }
 
-  else if (step === 6 && direction === "down") {
+  else if (step === 6) {
 
-    let pv_rate = updateData(FILTER_DATA, "pnaaaa");
-    let cc_rate = updateData(FILTER_DATA, "2naaaa");
-
-    // reset data
 
     if (currentSelect !== "anaaaa") {
-      resetDropDowns();
-      replayButton
-        .classed("hidden", true);
+      resetAll();
     }
 
     // change selection colors
@@ -688,125 +744,155 @@ function setVisForStep(step, direction) {
     paths
       .attr("class", d => "link unselected");
 
-    setTimeout(function () {
+    if (direction === "up") {
+      stepFired(step, "reset");
+    } else {
 
-      currentSelect = "pnaaaa";
-      updateSankey(pv_rate);
-    }, 3000);
+      let pv_rate = updateData(FILTER_DATA, "pnaaaa");
+      let cc_rate = updateData(FILTER_DATA, "2naaaa");
 
-    setTimeout(function () {
-      currentSelect = "2naaaa";
-      updateSankey(cc_rate);
+      // change selection colors
 
-    }, 5000);
+      rects
+        .attr("class", d => {
 
-    setTimeout(function () {
+          if (d.id === 10 ||
+            d.id <= 3) {
+            return "node selected";
+          }
+          else { return "node unselected"; }
+        });
 
-      replayButton
-        .classed("hidden", false)
-        .attr("xlink:href", d => "#step" + step);
+      paths
+        .attr("class", d => "link unselected");
 
-    }, 5500);
+      setTimeout(function () {
 
+        currentSelect = "pnaaaa";
+        updateSankey(pv_rate);
+      }, 1000);
+
+      setTimeout(function () {
+        currentSelect = "2naaaa";
+        updateSankey(cc_rate);
+
+      }, 5000);
+
+      setTimeout(function () {
+
+        replayButton
+          .classed("hidden", false)
+          .attr("xlink:href", d => "#step" + step)
+          .on("click", function () {
+            stepFired(step, "reset");
+            resetDropDowns();
+          });
+
+      }, 8000);
+    }
   }
 
-  else if (step === 7 && direction === "down") {
+  else if (step === 7) {
 
-    let pla1 = updateData(FILTER_DATA, "anaaaa");
-    let pla2 = updateData(FILTER_DATA, "alaaaa");
+    if (direction === "up") {
+      stepFired(step, "reset");
+    } else {
 
-    // revert data 
+      let pla1 = updateData(FILTER_DATA, "anaaaa");
+      let pla2 = updateData(FILTER_DATA, "alaaaa");
 
-    if (currentSelect !== "anaaaa") {
-      resetDropDowns();
 
-      replayButton
-        .classed("hidden", true);
+      // change selection colors
+
+      rects
+        .attr("class", d => {
+
+          if (d.id === 10) {
+            return "node selected";
+          }
+          else { return "node unselected"; }
+        });
+
+      paths
+        .attr("class", "link unselected");
+
+      // animate impact of pla
+
+      setTimeout(function () {
+
+        currentSelect = "anaaaa";
+        updateSankey(pla1);
+      }, 1);
+
+      setTimeout(function () {
+        currentSelect = "alaaaa";
+        updateSankey(pla2);
+      }, 4000);
+
+      setTimeout(function () {
+
+        replayButton
+          .classed("hidden", false)
+          .attr("xlink:href", d => "#step" + step);
+
+      }, 6000);
     }
 
-    // change selection colors
+  }
+  else if (step === 8 ) {
 
-    rects
-      .attr("class", d => {
+    if (direction === "up") {
+      stepFired(step, "reset");
+    } else {
 
-        if (d.id === 10) {
-          return "node selected";
-        }
-        else { return "node unselected"; }
-      });
+      let old1 = updateData(FILTER_DATA, "anoaaa");
+      let old2 = updateData(FILTER_DATA, "aloaaa");
 
-    paths
-      .attr("class", "link unselected");
 
-    // animate impact of pla
+      // change selection colors
 
-    setTimeout(function () {
+      if (currentSelect !== "anaaaa" ||
+        currentSelect !== "alaaaa") {
+        resetAll();
+      };
 
-      currentSelect = "anaaaa";
-      updateSankey(pla1);
-    }, 3000);
+      rects
+        .attr("class", d => {
+          if (d.id === 10) {
+            return "node selected";
+          }
+          else { return "node unselected"; }
+        });
 
-    setTimeout(function () {
-      currentSelect = "alaaaa";
-      updateSankey(pla2);
-    }, 4000);
+      paths
+        .attr("class", "link unselected");
 
-    setTimeout(function () {
+      setTimeout(function () {
+        currentSelect = "anoaaa";
+        updateSankey(old1);
+      }, 1);
 
-      replayButton
-        .classed("hidden", false)
-        .attr("xlink:href", d => "#step" + step);
+      setTimeout(function () {
+        currentSelect = "aloaaa";
+        updateSankey(old2);
+      }, 4000);
 
-    }, 4500);
+      setTimeout(function () {
+
+        replayButton
+          .classed("hidden", false)
+          .attr("xlink:href", d => "#step" + step);
+
+      }, 6500);
+
+    }
 
   }
-  else if (step === 8 && direction === "down") {
+  else if (step === 9) {
 
-    let old1 = updateData(FILTER_DATA, "anoaaa");
-    let old2 = updateData(FILTER_DATA, "aloaaa");
-
-
-    // change selection colors
-
-    rects
-      .attr("class", d => {
-        if (d.id === 10) {
-          return "node selected";
-        }
-        else { return "node unselected"; }
-      });
-
-    paths
-      .attr("class", "link unselected");
-
-    if (currentSelect !== "anaaaa") {
-      resetDropDowns();
-
-      replayButton
-        .classed("hidden", true);
-    };
-
-    setTimeout(function () {
-      currentSelect = "anoaaa";
-      updateSankey(old1);
-    }, 2000);
-
-    setTimeout(function () {
-      currentSelect = "aloaaa";
-      updateSankey(old2);
-    }, 3500);
-
-    setTimeout(function () {
-
-      replayButton
-        .classed("hidden", false)
-        .attr("xlink:href", d => "#step" + step);
-
-    }, 4000);
-
-  }
-  else if (step === 9 && direction === "down") {
-
+    if (direction === "up") {
+      stepFired(step, "reset");
+    } else {
     let inc1 = updateData(FILTER_DATA, "anaaal");
     let inc2 = updateData(FILTER_DATA, "alaaal");
 
@@ -823,27 +909,32 @@ function setVisForStep(step, direction) {
     paths
       .attr("class", "link unselected");
 
-    if (currentSelect !== "alaaal") {
-      currentSelect = "anaaal";
-      updateSankey(inc1);
+      if (currentSelect !== "alaaal") {
+        setTimeout(function () {
+          currentSelect = "anaaal";
+          updateSankey(inc1);
+        }, 1);
 
-      setTimeout(function () {
-        currentSelect = "alaaal";
-        updateSankey(inc2);
-      }, 3000);
+        setTimeout(function () {
+          currentSelect = "alaaal";
+          updateSankey(inc2);
+        }, 4000);
 
-      setTimeout(function () {
+        setTimeout(function () {
 
-        replayButton
-          .classed("hidden", false)
-          .attr("xlink:href", d => "#step" + 8);
+          replayButton
+            .classed("hidden", false)
+            .attr("xlink:href", d => "#step" + step);
 
-      }, 3500);
-
+        }, 6500);
+      }
     }
   }
-  else if (step === 10 && direction === "down") {
+  else if (step === 10 ) {
 
+    if (direction === "up") {
+      stepFired(step, "reset");
+    } else {
     let hisp1 = updateData(FILTER_DATA, "anaHaa");
     let hisp2 = updateData(FILTER_DATA, "alaHaa");
 
@@ -860,28 +951,34 @@ function setVisForStep(step, direction) {
     paths
       .attr("class", "link unselected");
 
-    if (currentSelect !== "alaHaa") {
-      currentSelect = "anaHaa";
-      updateSankey(hisp1);
+      if (currentSelect !== "alaHaa") {
 
-      setTimeout(function () {
-        currentSelect = "alaHaa";
-        updateSankey(hisp2);
-      }, 3000);
+        setTimeout(function () {
+          currentSelect = "anaHaa";
+          updateSankey(hisp1);
+        }, 1);
 
-      setTimeout(function () {
+        setTimeout(function () {
+          currentSelect = "alaHaa";
+          updateSankey(hisp2);
+        }, 4000);
 
-        replayButton
-          .classed("hidden", false)
-          .attr("xlink:href", d => "#step" + 8);
+        setTimeout(function () {
 
-      }, 3500);
+          replayButton
+            .classed("hidden", false)
+            .attr("xlink:href", d => "#step" + step);
 
+        }, 6500);
+      }
 
     }
   }
-  else if (step === 11 && direction === "down") {
+  else if (step === 11) {
 
+    if (direction === "up") {
+      stepFired(step, "reset");
+    } else {
     let cc1 = updateData(FILTER_DATA, "2naaaa");
     let cc2 = updateData(FILTER_DATA, "2laaaa");
 
@@ -898,175 +995,164 @@ function setVisForStep(step, direction) {
     paths
       .attr("class", "link unselected");
 
-    if (currentSelect !== "2laaaa") {
-      currentSelect = "2naaaa";
-      updateSankey(cc1);
+      if (currentSelect !== "2laaaa") {
+
+        setTimeout(function () {
+          currentSelect = "2naaaa";
+          updateSankey(cc1);
+        }, 1);
+
+        setTimeout(function () {
+          currentSelect = "2laaaa";
+          updateSankey(cc2);
+        }, 4000);
+
+        setTimeout(function () {
+
+          replayButton
+            .classed("hidden", false)
+            .attr("xlink:href", d => "#step" + step);
+
+        }, 6500);
+      }
+    }
+
+  }
+
+  else if (step === 12) {
+
+    if (direction === "up") {
+      stepFired(step, "reset");
+    } else {
+      // funky selection combos for later
+
+      var selectRects1 = [0, 2, 5, 7];
+      var selectRects2 = [0, 2, 5, 7, 10];
+      var selectPaths0 = [0, 2];
+      var selectPaths1 = selectRects1;
+      var selectPaths2 = [5, 7, 10];
+
+
+      // progress triggers
+
+      if (currentSelect !== "anaaaa") {
+        resetAll();
+      };
+
+      rects
+        .attr("class", d => {
+
+          if (d.id === 0 ||
+            d.id === 2) {
+            return "node selected";
+          }
+          else { return "node unselected"; }
+        });
+
+      paths
+        .attr("class", "link unselected");
 
       setTimeout(function () {
-        currentSelect = "2laaaa";
-        updateSankey(cc2);
+
+        rects
+          .transition()
+          .duration(500)
+          .attr("class", d => {
+
+            if (selectRects1.includes(d.id)) {
+              return "node selected";
+            }
+            else { return "node unselected"; }
+          });
+
+        paths
+          .transition()
+          .duration(500)
+          .attr("class", d => {
+
+            if (selectPaths0.includes(d.source.id) &&
+              selectPaths1.includes(d.target.id)) {
+              return "link selected";
+            }
+            else { return "link unselected"; }
+          });
+
+      }, 2000);
+
+      setTimeout(function () {
+
+        // change selection colors
+
+        rects
+          .transition()
+          .duration(500)
+          .attr("class", d => {
+
+            if (selectRects2.includes(d.id)) {
+              return "node selected";
+            }
+            else { return "node unselected"; }
+          });
+
+        paths
+          .transition()
+          .duration(500)
+          .attr("class", d => {
+
+            if (selectPaths1.includes(d.source.id) &&
+              selectPaths2.includes(d.target.id)) {
+              return "link selected";
+            }
+            else { return "link unselected"; }
+          });
+
       }, 3000);
+
+      setTimeout(function () {
+
+        if (currentSelect !== "alaaaa") {
+          currentSelect = "alaaaa";
+          let selectedData = updateData(FILTER_DATA, currentSelect);
+          updateSankey(selectedData);
+        }
+
+        rects
+          .attr("class", d => {
+
+            if (selectRects2.includes(d.id)) {
+              return "node selected";
+            }
+            else { return "node unselected"; }
+          });
+
+        paths
+          .attr("class", d => {
+
+            if (selectPaths1.includes(d.source.id) &&
+              selectPaths2.includes(d.target.id)) {
+              return "link selected";
+            }
+            else { return "link unselected"; }
+          });
+
+      }, 5000);
 
       setTimeout(function () {
 
         replayButton
           .classed("hidden", false)
-          .attr("xlink:href", d => "#step" + 8);
+          .attr("xlink:href", d => "#step" + step);
 
-      }, 3500);
-
+      }, 6000);
     }
   }
-
-  else if (step === 12 && direction === "down") {
-
-    // funky selection combos for later
-
-    var selectRects1 = [0, 2, 5, 7];
-    var selectRects2 = [0, 2, 5, 7, 10];
-    var selectPaths0 = [0, 2];
-    var selectPaths1 = selectRects1;
-    var selectPaths2 = [5, 7, 10];
-
-    // reset colors
-
-    rects
-      .attr("class", d => "node " + d.class);
-    paths
-      .attr("class", d => "link " + d.source.class);
-
-
-    // progress triggers
-
-    if (currentSelect !== "anaaaa") {
-      resetDropDowns();
-
-      replayButton
-        .classed("hidden", true);
-
-    };
-
-
-    rects
-      .attr("class", d => {
-
-        if (d.id === 0 ||
-          d.id === 2) {
-          return "node selected";
-        }
-        else { return "node unselected"; }
-      });
-
-    paths
-      .attr("class", "link unselected");
-
-    setTimeout(function () {
-
-      rects
-        .transition()
-        .duration(500)
-        .attr("class", d => {
-
-          if (selectRects1.includes(d.id)) {
-            return "node selected";
-          }
-          else { return "node unselected"; }
-        });
-
-      paths
-        .transition()
-        .duration(500)
-        .attr("class", d => {
-
-          if (selectPaths0.includes(d.source.id) &&
-            selectPaths1.includes(d.target.id)) {
-            return "link selected";
-          }
-          else { return "link unselected"; }
-        });
-
-    }, 2000);
-
-    setTimeout(function () {
-
-      // change selection colors
-
-      rects
-        .transition()
-        .duration(500)
-        .attr("class", d => {
-
-          if (selectRects2.includes(d.id)) {
-            return "node selected";
-          }
-          else { return "node unselected"; }
-        });
-
-      paths
-        .transition()
-        .duration(500)
-        .attr("class", d => {
-
-          if (selectPaths1.includes(d.source.id) &&
-            selectPaths2.includes(d.target.id)) {
-            return "link selected";
-          }
-          else { return "link unselected"; }
-        });
-
-    }, 3000);
-
-    setTimeout(function () {
-
-      if (currentSelect !== "alaaaa") {
-        currentSelect = "alaaaa";
-        let selectedData = updateData(FILTER_DATA, currentSelect);
-        updateSankey(selectedData);
-      }
-
-      rects
-        .attr("class", d => {
-
-          if (selectRects2.includes(d.id)) {
-            return "node selected";
-          }
-          else { return "node unselected"; }
-        });
-
-      paths
-        .attr("class", d => {
-
-          if (selectPaths1.includes(d.source.id) &&
-            selectPaths2.includes(d.target.id)) {
-            return "link selected";
-          }
-          else { return "link unselected"; }
-        });
-
-    }, 4000);
-
-    setTimeout(function () {
-
-      replayButton
-        .classed("hidden", false)
-        .attr("xlink:href", d => "#step" + step);
-
-    }, 4500);
-
-  }
-
 
   else if (step === 13) {
 
     if (direction === "up") {
       // collapsing filters incase of up-scrolling
-
-      filters
-        .classed("hidden", false)
-        .transition()
-        .duration(1000)
-        .style("opacity", 0)
-        .style("height", "0px");
+      resetAll();
+      stepFired(step, "reset");
     } else {
 
       // select PLA data 
@@ -1086,29 +1172,44 @@ function setVisForStep(step, direction) {
       paths
         .attr("class", d => "link " + d.source.class);
     };
+
   }
 
   else if (step === 14) {
 
-    select("figure")
-      .style("height", "700px")
-      .style("bottom", "50px");
 
-    filters
-      .classed("hidden", false)
-      .transition()
-      .duration(1000)
-      .style("opacity", 1)
-      .style("height", "100px");
+    function step14() {
 
-    if (currentSelect !== "anaaaa") {
-      resetDropDowns();
+      resetAll();
+
+      select("figure")
+        .style("height", "700px")
+        .style("bottom", "50px");
+
+      filters
+        .classed("hidden", false)
+        .transition()
+        .duration(1000)
+        .style("opacity", 1)
+        .style("height", "100px");
     }
 
-    rects
-      .attr("class", d => "node " + d.class);
-    paths
-      .attr("class", d => "link " + d.source.class);
+    if (direction === "down") { step14(); }
+    if (direction === "up") {
+      filters
+        .classed("hidden", true)
+        .transition()
+        .duration(1000)
+        .style("opacity", 0)
+        .style("height", "0px");
+    }
+
+    // reset for a sticky bug if someone
+    // scrolls through really fast
+
+    setTimeout(function () {
+      if (currentSelect === "alaaaa") { step14() }
+    }, 10000);
 
   }
   else if ( step === 15 ) {
@@ -1122,14 +1223,15 @@ function setVisForStep(step, direction) {
       .style("opacity", 1)
       .style("height", "100px");
 
-    if (currentSelect !== "anaaaa") {
-      resetDropDowns();
-    }
-
     rects
       .attr("class", d => "node " + d.class);
     paths
       .attr("class", d => "link " + d.source.class);
+
+
+    if (currentSelect !== "anaaaa") {
+      resetDropDowns();
+    }
 
   }
 }
@@ -1156,3 +1258,34 @@ function resetDropDowns() {
     .each(function () { this.selectedIndex = 0 })
 }
 
+// manage animations
+
+function stepFired(step, action) {
+
+  console.log(step, " trigger ", history[step], "- step ", step);
+
+  if (action === "reset") {
+    console.log("resetting step animation");
+    history[step] = false;
+    return true;
+  }
+  else if (action === "get") {
+    return history[step];
+  }
+  else if (action === "fire") {
+    if (!history[step]) {
+      history[step] = true;
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  else {
+    console.log("stepFired(" + step +
+      ", " + action + ") caused error.");
+  }
+
+  return none;
+
+}

@@ -337,7 +337,8 @@ export function makeTitleText(currentSelection) {
     title.push(opts["default"]);
 
   }
-  else if (currentSelection.match(/a/gi).length === 4) {
+  else if (currentSelection.match(/a/gi) &&
+    currentSelection.match(/a/gi).length === 4) {
 
     let optMatch = {
       0: "s",
@@ -373,48 +374,6 @@ export function makeTitleText(currentSelection) {
 
   return title.join("");
 
-}
-
-
-// manage animations
-
-export function stepFired(step, reset) {
-
-  let history = {
-
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 0,
-    5: 0,
-    6: 0,
-    7: 0,
-    8: 0,
-    9: 0,
-    10: 0,
-    11: 0,
-    12: 0,
-    13: 0,
-    14: 0,
-    15: 0,
-
-  };
-
-  console.log(step, " trigger ", history[step]);
-
-  if (reset) {
-    console.log("resetting step animation");
-    history[step] = 0;
-    return true;
-  }
-
-  if (history[step] === 0) {
-    history[step] = 1;
-    return true;
-  }
-  else {
-    return false;
-  }
 }
 
 
