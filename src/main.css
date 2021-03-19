@@ -1,7 +1,17 @@
 
 a {
   cursor: pointer;
+  color: #316D64;
+  text-decoration: none;
 }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  a:visited {
+    color: #316D64;
+  }
 
 html,
 body {
@@ -12,6 +22,29 @@ body {
   margin: 0px;
   padding: 0px 0px 1px 0px;
   width: 100%;
+}
+
+h1 {
+  margin: 30px 10px 0px 10px;
+}
+
+h2 {
+  margin: 0px 10px 10px 10px;
+  font-size: 24px;
+  font-style: italic;
+  font-weight: normal;
+}
+
+h3 {
+  margin: 0px 10px 10px 10px;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+p {
+  margin: 5px 10px 10px 10px;
+  font-size: medium;
 }
 
 div.header, div.footer {
@@ -26,49 +59,32 @@ div.header, div.footer {
 
 }
 
-div.uplink {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  justify-items: center;
-  flex-direction: column;
-  align-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 0px;
-  background-color: white;
-  margin-top: 0px;
-}
-
 div.footer {
   margin-top: 50px;
 }
 
-#topOpts {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-content: center;
-    width: 100%;
-    margin: 0px;
-    padding: 0px;
+.header h2 {
+  font-size: 18px;
 }
 
-#topOpts a {
-    text-decoration:none;
-    margin: 0px 10px;
+#topOpts {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-content: center;
+  width: 100%;
+  margin: 0px;
+  padding: 0px;
 }
+
+  #topOpts a {
+    text-decoration: none;
+    margin: 0px 10px;
+  }
 
 .icon path {
   fill: black;
   background-color: #D8ECE9;
-}
-
-div.intro {
-  display: flex;
-  justify-content: center;
-  justify-items: center;
-  flex-direction: row;
 }
 
 div.footerText {
@@ -85,6 +101,32 @@ div.footer h2 {
   font-weight: bold;
 }
 
+div.uplink {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  justify-items: center;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0px;
+  background-color: white;
+  margin-top: 0px;
+}
+
+div.intro {
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+  flex-direction: row;
+}
+
+h2.title {
+  margin-top: 25px;
+  font-style: normal;
+  font-weight: bold;
+}
 
 div.text {
   width: 50%;
@@ -93,81 +135,10 @@ div.text {
   margin-bottom: 50px;
 }
 
-
-h1 {
-    margin: 30px 10px 0px 10px;
-}
-
-h2 {
-  margin: 0px 10px 10px 10px;
-  font-size: 24px;
-  font-style: italic;
-  font-weight: normal;
-}
-
-h3 {
-  margin: 0px 10px 10px 10px;
-  font-size: 24px;
-  font-weight: 600;
-  text-align: center;
-
-}
-
-.header h2 {
-    font-size: 18px;
-}
-
-p {
-  margin: 5px 10px 10px 10px;
-  font-size: medium;
-}
-
-a {
-  color: #316D64;
-  text-decoration: none;
-}
-
-  a:hover {
-    text-decoration: underline;
-  }
-
-  a:visited {
-    color: #316D64;
-  }
-
-h2.title {
-  margin-top: 25px;
-  font-style: normal;
-  font-weight: bold;
-}
-  
-
 div.text p {
   margin: 5px 10px 15px 10px;
   font-size: 18px;
   
-}
-
-#titles {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  padding: 10px 0px 0px 0px;
-}
-#titles h3{
-    margin: 0px;
-    padding: 0px 5px;
-}
-#titlebox {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 0px;
-}
-
-#titlebox p {
-    margin-bottom: 10px;
-    padding: 0px;
 }
 
 div#app {
@@ -179,6 +150,30 @@ div#app {
   margin: 20px, 25px;
 
 }
+
+#titles {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 10px 0px 0px 0px;
+}
+
+  #titles h3 {
+    margin: 0px;
+    padding: 0px 5px;
+  }
+
+#titlebox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0px;
+}
+
+  #titlebox p {
+    margin-bottom: 10px;
+    padding: 0px;
+  }
 
 div#filters {
   display: flex;
@@ -218,12 +213,6 @@ div#filters {
 #changes .hidden {
    display: unset;
    opacity: 0;
-}
-
-
-path {
-  stroke-opacity: 0.35;
-  fill: none;
 }
 
 #replay {
@@ -338,6 +327,11 @@ div.step {
   text-align: center;
 }
 
+path {
+  stroke-opacity: 0.35;
+  fill: none;
+}
+
 path.fp {
   stroke: #469890;
 }
@@ -415,7 +409,6 @@ rect.unselected {
 rect.rectHover {
   fill: #333333;
 }
-
 
 div#tooltip {
   position: absolute;

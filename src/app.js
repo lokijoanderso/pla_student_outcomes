@@ -1,3 +1,5 @@
+// main code to build the chart
+// and dynamic page elements
 
 import {
   prepData, updateData,
@@ -165,7 +167,10 @@ csv(RATE_DATA)
       .classed("hidden", true);
 
     // scrollama set up for triggers
-    // using d3 for convenience
+    // This section is largely borrowed from
+    // Russell Goldenberg's scrollama sticky overlay example
+    // https://russellgoldenberg.github.io/scrollama/sticky-overlay
+
 
     var scrolly = select("#scrolly");
     var figure = scrolly.select("figure");
@@ -178,15 +183,17 @@ csv(RATE_DATA)
     // generic window resize listener event
     function handleResize() {
 
-      // These are the orignal settings... I want to see if I can figure
+      // 1. update height of step elements
+
+      // Saving the orignal settings...
+      // I want to see if I can figure
       // out how to make the svg sizable before using these settings
 
-      // 1. update height of step elements
-      //var stepH = Math.floor(window.innerHeight * 0.75);
-      //step.style("height", stepH + "px");
+        //var stepH = Math.floor(window.innerHeight * 0.75);
+        //step.style("height", stepH + "px");
+        //var figureHeight = window.innerHeight / 2;
+        //var figureMarginTop = (window.innerHeight - figureHeight) / 2;
 
-      //var figureHeight = window.innerHeight / 2;
-      //var figureMarginTop = (window.innerHeight - figureHeight) / 2;
 
       var stepH = 500;
       var shortH = 200;
@@ -223,8 +230,6 @@ csv(RATE_DATA)
 
     function handleStepProgress(response) {
 
-      // console.log(response);
-
       var el = select(response.element);
       var classes = el.attr("class");
 
@@ -249,14 +254,11 @@ csv(RATE_DATA)
       }
     }
 
-
-
     function setupStickyfill() {
       step.selectAll(".sticky").each(function () {
         Stickyfill.add(this);
       });
     }
-
 
     function init() {
       setupStickyfill();
@@ -337,9 +339,6 @@ function buildFilters(data) {
 
       let newData = updateData(FILTER_DATA, newSelect);
       updateSankey(newData);
-
-      // test code commented out 
-      // console.log(event.target.value, row);
 
     })
     .selectAll('option')
@@ -503,7 +502,6 @@ function updateSankey(data) {
 
   // update callout div with grad rate, etc
 
-
   let ratesGrad = select("h1.rate")
     .text("" + (data.gradPerc * 100).toFixed(0) + "%");
 
@@ -596,11 +594,6 @@ function updateSankey(data) {
   currentRate = data.gradPerc;
   currentCost = data.cost;
   currentTime = data.time;
-
-  // debugging prints commented out
-  // console.log("new grad rate:", data.gradPerc);
-  // console.log("new cost:", data.cost);
-  // console.log("new time:", data.time); 
 
   // update the chart title
 
@@ -1293,8 +1286,6 @@ function setVisForStep(step, direction) {
 }
 
 
-
-
 // set diagram and dropdown selects back to defaults
 
 function resetDropDowns() {
@@ -1313,6 +1304,7 @@ function resetDropDowns() {
     .selectAll("select")
     .each(function () { this.selectedIndex = 0 })
 }
+
 
 // manage animations
 

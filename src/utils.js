@@ -1,25 +1,5 @@
 // export functions
 
-// convert strings to numbers in csv import
-
-export function convertNumbers(data) {
-  var arr = [];
-  for (var idx in data) {
-    var r = {};
-    var row = data[idx];
-
-    for (var [ k, val ] of Object.entries(row)) {
-      r[k] = Number(val);
-      if (isNaN(r[k])) {
-        r[k] = val;
-      }
-      }
-    arr.push(r);
-  }
-
-  return arr;
-}
-
 
 // create unique menu listings and filterable json links
 
@@ -261,9 +241,6 @@ export function recalcNodeValues(data) {
 
   newData["nodes"] = newNodes;
 
-  // test code commented out
-  // console.log("recalc data:", newData);
-
   return newData;
 
   }
@@ -302,7 +279,6 @@ export function tooltipText(data) {
       data.name + "</p> <p id='sub'> (they may transfer more than once) </p> ";
   }
 
-  
 }
 
 export function tooltipsPathText(data) {
@@ -323,7 +299,7 @@ export function makeTitleText(currentSelection) {
 
   // mix and match bits
   let opts = {
-    "default": "US Students",
+    "default": "US College Students",
     "sa": "All ",
     "s2": "Public 2-Year Students ",
     "s4": "Public 4-Year Students ",
