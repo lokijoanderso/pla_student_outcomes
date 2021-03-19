@@ -3,6 +3,7 @@ import {
   prepData, updateData,
   recalcNodeValues,
   tooltipText,
+  tooltipsPathText,
   makeTitleText,
   renderSVG
 } from './utils';
@@ -85,15 +86,11 @@ let topLinks = select("#topOpts");
 topLinks
   .selectAll("span")
   .on("mouseover", d => {
-    console.log(event.target);
-
     select(event.currentTarget)
       .select("path")
       .style("fill", "#782E6D");
   })
   .on("mouseout", d => {
-    console.log(event.target);
-
     select(event.currentTarget)
       .select("path")
       .style("fill", "black");
@@ -226,7 +223,7 @@ csv(RATE_DATA)
 
     function handleStepProgress(response) {
 
-      console.log(response);
+      // console.log(response);
 
       var el = select(response.element);
       var classes = el.attr("class");
@@ -342,7 +339,7 @@ function buildFilters(data) {
       updateSankey(newData);
 
       // test code commented out 
-      console.log(event.target.value, row);
+      // console.log(event.target.value, row);
 
     })
     .selectAll('option')
@@ -395,7 +392,30 @@ function updateSankey(data) {
     .append("path")
     .attr("d", sankeyLinkHorizontal())
     .attr("stroke-width", d => d.width)
-    .attr("class", d => "link " + d.source.class);
+    .attr("class", d => "link " + d.source.class)
+    .on("mouseover", function (event, d) {
+
+      console.log(event.currentTarget);
+
+      select(event.currentTarget)
+        .style("stroke-opacity", 0.60);
+
+      div.transition()
+        .duration(200)
+        .style("opacity", 0.9);
+
+      div.html(tooltipsPathText(d))
+        .style("left", event.pageX + "px")
+        .style("top", event.pageY + "px");
+    })
+    .on("mouseout", function () {
+      div.transition()
+        .duration(500)
+        .style("opacity", 0);
+
+      select(event.currentTarget)
+        .style("stroke-opacity", 0.35);
+    });
 
     link
       .transition(t)
@@ -1278,8 +1298,6 @@ function resetDropDowns() {
 // manage animations
 
 function stepFired(step, action) {
-
-  console.log(step, " trigger ", history[step], "- step ", step);
 
   if (action === "reset") {
     console.log("resetting step animation");

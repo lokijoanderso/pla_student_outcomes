@@ -262,7 +262,7 @@ export function recalcNodeValues(data) {
   newData["nodes"] = newNodes;
 
   // test code commented out
-  console.log("recalc data:", newData);
+  // console.log("recalc data:", newData);
 
   return newData;
 
@@ -305,10 +305,21 @@ export function tooltipText(data) {
   
 }
 
+export function tooltipsPathText(data) {
+
+  let from = data.source.class;
+  let to = data.target.class;
+  let rate = (data.value * 100).toFixed(1);
+
+  return "<p> " + rate + "% of students <br />" + from + "  >> " +
+    to + "</p>";
+
+}
+
 export function makeTitleText(currentSelection) {
 
 
-  let title = ["Estimated Four-Year Degree Outcomes for ",];
+  let title = ["Bachelor's Degree Outcomes for ",];
 
   // mix and match bits
   let opts = {
