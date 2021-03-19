@@ -967,6 +967,7 @@ function setVisForStep(step, direction) {
             .attr("xlink:href", d => "#step" + step)
             .on("click", function () {
               stepFired(step, "reset");
+              resetDropDowns();
             });
 
         }, 6500);
@@ -1010,9 +1011,13 @@ function setVisForStep(step, direction) {
 
           replayButton
             .classed("hidden", false)
-            .attr("xlink:href", d => "#step" + step);
+            .attr("xlink:href", d => "#step" + step)
+            .on("click", function () {
+              stepFired(step, "reset");
+              resetDropDowns();
 
-        }, 6500);
+            });
+              }, 6500);
       }
 
     }
@@ -1021,6 +1026,7 @@ function setVisForStep(step, direction) {
 
     if (direction === "up") {
       stepFired(step, "reset");
+      resetDropDowns();
     } else {
     let cc1 = updateData(FILTER_DATA, "2naaaa");
     let cc2 = updateData(FILTER_DATA, "2laaaa");
@@ -1057,6 +1063,7 @@ function setVisForStep(step, direction) {
             .attr("xlink:href", d => "#step" + step)
             .on("click", function () {
               stepFired(step, "reset");
+              resetDropDowns();
             });
 
         }, 6500);
@@ -1190,6 +1197,7 @@ function setVisForStep(step, direction) {
           .attr("xlink:href", d => "#step" + step)
           .on("click", function () {
             stepFired(step, "reset");
+            resetDropDowns();
           });
 
       }, 6000);
