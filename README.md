@@ -1,22 +1,23 @@
 # Prior Learning Assessment Data Visualization
-## Dynamic Project Final: An Interactive Sankey Diagram
-### CAPP 30239 - Data Visualization for Policy Analysis - Winter 2021
+### Dynamic Project Final: An Interactive Sankey Diagram
+**CAPP 30239 - Data Visualization for Policy Analysis - Winter 2021**
 
-by Kelsey Anderson
+by Kelsey Anderson - 
 [kjanderson@uchicago.edu](mailto:kjanderson@uchicago.edu)
 
-## Live project page: 
+## Live project page
 [https://lokijoanderso.github.io/pla_student_outcomes/](https://lokijoanderso.github.io/pla_student_outcomes/)
 
 ## Notes
 This is in some ways still a work in progress. You'll find the original assignment readme text at the bottom for context. That may some day go away.
+For conceptual and not technical context here is the [course assignment webpage](https://capp-30239-winter-2021.netlify.app/#dynamic3).
 
 ### Learning d3
 Much of this project was about struggling to learn d3 and javascript while attempting to make a visually appealing data presentation. I'm still working out some kinks.
 The longer animated sequences tend to be laggy if the reader isn't scrolling at exactly the right pace (kinda slow...).
 
 ### The Data
-One of my team members suggested I put a link to download my data file that runs this tangle of connected lines. I love that idea, but would like to write out some methodology notes and clean up my python code to include that in this repo. The stuff behind the sankey is in a very particular aggregated node-to-node form and it's very much good for 
+One of my team members suggested I put a link to download my data file that runs this tangle of connected lines. I love that idea, but would like to write out some methodology notes and clean up my python code to include that in this repo. The stuff behind the sankey is in a very particular aggregated node-to-node form and it's not good for 
 anything but making some kind of flow mapping.
 Ideally I could then post the original data sets, code to translate them for this project and an explanation of what it all means. That seems more useful. It's on the to do list.
 
@@ -25,7 +26,7 @@ I appreciate you reading my blathering.
 More content and less commentary pending. ^_^
 
 
-## ---------------------------
+## ------------ Original Project Template Documentation ---------------
 
 # Dynamic Project Scaffold
 
