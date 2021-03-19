@@ -395,10 +395,8 @@ function updateSankey(data) {
     .attr("class", d => "link " + d.source.class)
     .on("mouseover", function (event, d) {
 
-      console.log(event.currentTarget);
-
       select(event.currentTarget)
-        .style("stroke-opacity", 0.60);
+        .style("stroke-opacity", 0.70);
 
       div.transition()
         .duration(200)
@@ -460,11 +458,18 @@ function updateSankey(data) {
       div.html(tooltipText(d))
         .style("left", event.pageX + "px")
         .style("top", event.pageY + "px");
+
+      select(event.currentTarget)
+        .classed("rectHover", true);
+
     })
     .on("mouseout", function () {
       div.transition()
         .duration(500)
-        .style("opacity", 0); 
+        .style("opacity", 0);
+
+      select(event.currentTarget)
+        .classed("rectHover", false);
     });
 
   node.transition(t)

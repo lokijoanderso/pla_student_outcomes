@@ -153,7 +153,21 @@ div.text p {
   flex-direction: row;
   justify-content: center;
   padding: 10px 0px 0px 0px;
+}
+#titles h3{
+    margin: 0px;
+    padding: 0px 5px;
+}
+#titlebox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0px;
+}
 
+#titlebox p {
+    margin-bottom: 10px;
+    padding: 0px;
 }
 
 div#app {
@@ -250,17 +264,11 @@ figure {
 
 figure p {
   text-align: center;
-  padding: 1rem;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -moz-transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
-  font-size: 8rem;
-  font-weight: 900;
-  color: white;
-  opacity: 0.25;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333333;
+  font-style: italic;
+
 }
 
 .step {
@@ -327,10 +335,8 @@ div.step {
   text-align: center;
 }
 
-
 path.fp {
   stroke: #469890;
-
 }
 path.priv {
   stroke: #316D64;
@@ -402,6 +408,11 @@ path.unselected {
 rect.unselected {
   fill: #555555;
 }
+
+rect.rectHover {
+  fill: #333333;
+}
+
 
 div#tooltip {
   position: absolute;
