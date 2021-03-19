@@ -3,7 +3,9 @@ import {
   prepData, updateData,
   recalcNodeValues,
   tooltipText,
-  makeTitleText
+  makeTitleText,
+  renderSVG,
+  stepFired
 } from './utils';
 import { select } from 'd3-selection';
 import {
@@ -42,6 +44,9 @@ let MENU_OPTS = {};
 // default starting selection
 
 let currentSelect = 'anaaaa';
+let currentRate = 0;
+let currentCost = 0;
+let currentTime = 0;
 
 
 // set the dimensions and margins of the graph
@@ -52,6 +57,21 @@ const margin = { top: 10, right: 10, bottom: 0, left: 10 },
 
 
 // append the svg object to the body of the page
+
+let replayButton = select("#titles")
+  .append("svg")
+  .attr("id", "replay")
+  .append("a")
+  .attr("xlink:href", d => "#step1")
+  .classed("hidden", true);
+replayButton
+  .append("rect")
+  .attr("width", 30)
+  .attr("height", 30)
+  .style("fill", "white");
+replayButton
+  .append("path")
+  .attr("d", renderSVG("replay"));
 
 let svg = select("#app").append("svg")
   .attr("width", width + margin.left + margin.right)
@@ -82,6 +102,10 @@ csv(RATE_DATA)
     let selectedData = buildFilters(data);
 
     // add sankey nodes and links
+
+    currentRate = selectedData.gradPerc;
+    currentCost = selectedData.cost;
+    currentTime = selectedData.time;
 
     updateSankey(selectedData);
 
@@ -137,6 +161,7 @@ csv(RATE_DATA)
         .style("height", figureHeight + "px")
         .style("top", figureMarginTop + "px");
 
+
       // 3. tell scrollama to update new element dimensions
 
       scroller.resize();
@@ -146,18 +171,18 @@ csv(RATE_DATA)
 
     function handleStepProgress(response) {
 
-      // console.log(response);
+      console.log(response);
 
       var el = select(response.element);
       var classes = el.attr("class");
 
+      // add color to current step only
+
+      step.classed("is-active", function (d, i) {
+        return i === response.index;
+      });
+
       if (classes === "step") {
-
-        // add color to current step only
-
-        step.classed("is-active", function (d, i) {
-          return i === response.index;
-        });
 
         // figure.select("p").text(response.index + 1);
 
@@ -165,10 +190,12 @@ csv(RATE_DATA)
 
       // function to change chart
 
-      setVisForStep(response.index + 1,
-        response.progress);
+        setVisForStep(response.index + 1,
+          response.direction);
 
     }
+
+
 
     function setupStickyfill() {
       step.selectAll(".sticky").each(function () {
@@ -193,9 +220,10 @@ csv(RATE_DATA)
           step: "#scrolly article .step",
           offset: .2,
           debug: false,
-          progress: true
+          order: false
+
         })
-        .onStepProgress(handleStepProgress);
+        .onStepEnter(handleStepProgress);
 
       // setup resize event
 
@@ -392,15 +420,103 @@ function updateSankey(data) {
 
   // update callout div with grad rate, etc
 
-  var ratesGrad = select(".rate")
+
+  let ratesGrad = select("h1.rate")
     .text("" + (data.gradPerc * 100).toFixed(0) + "%");
 
-  var ratesCost = select(".cost")
+  let ratesCost = select("h1.cost")
     .text("$" + Math.round(data.cost, 0)
       .toLocaleString('en-US'));
 
-  var ratesTime = select(".time")
+  let ratesTime = select("h1.time")
     .text("" + data.time.toFixed(1));
+
+  // check for changes
+
+  let rateChange = (data.gradPerc - currentRate).toFixed(2);
+  let costChange = Math.round(data.cost - currentCost, 0);
+  let timeChange = (data.time - currentTime).toFixed(1);
+  let rateColor = "green";
+  let timeColor = "green";
+  let costColor = "green";
+  let negColor = "red";
+
+  let rateText = "" + Math.round((rateChange * 100), 0) + "%";
+  let timeText = timeChange;
+  let costText = "$" +
+    Math.abs(costChange, 0).toLocaleString('en-US');
+
+  if (Math.abs(rateChange) < 0.005 ) {
+    select("h2.rate")
+      .attr("class", "rate hidden");
+  }
+  else {
+
+    if (rateChange > 0) {
+      rateText = "+" + rateText;
+    } else {
+      rateColor = negColor;
+    }
+  
+
+  let ratesGradChange = select("h2.rate")
+    .attr("class", "rate")
+    .text( rateText );
+
+    ratesGradChange
+      .style("color", rateColor);
+
+  }
+
+  if (costChange === 0) {
+    select("h2.cost")
+      .attr("class", "cost hidden");
+  }
+  else {
+
+    if (costChange > 0) {
+      costText = "+" + costText;
+      costColor = negColor;
+    } else {
+      costText = "-" + costText;
+    }
+
+    let ratesCostChange = select("h2.cost")
+      .attr("class", "cost")
+      .text(costText);
+
+    ratesCostChange
+      .style("color", costColor);
+
+  }
+
+  if (Math.abs(timeChange) < 0.05) {
+    select("h2.time")
+      .attr("class", "time hidden");
+  }
+  else {
+
+    if (timeChange > 0) {
+      timeText = "+" + timeText;
+      timeColor = negColor;
+    }
+
+    let ratesCostChange = select("h2.time")
+      .attr("class", "time")
+      .text(timeText);
+
+    ratesCostChange
+      .style("color", timeColor);
+
+  }
+
+  currentRate = data.gradPerc;
+  currentCost = data.cost;
+  currentTime = data.time;
+
+  console.log("new grad rate:", data.gradPerc);
+  console.log("new cost:", data.cost);
+  console.log("new time:", data.time); 
 
   // update the chart title
 
@@ -408,15 +524,9 @@ function updateSankey(data) {
     .select("h3")
     .text(makeTitleText(currentSelect));
 
-
-  console.log("new grad rate:", data.gradPerc);
-  console.log("new cost:", data.cost);
-  console.log("new time:", data.time); 
-
-
 }
 
-function setVisForStep(step, progress) {
+function setVisForStep(step, direction) {
 
   let filters = select("#filters");
 
@@ -428,8 +538,25 @@ function setVisForStep(step, progress) {
     .select("svg")
     .selectAll("path");
 
+  replayButton
+    .classed("hidden", true);
 
-  if (step === 1) {
+  if (step >= 1 && step < 6) {
+    replayButton
+      .classed("hidden", true);
+  }
+
+  if (step < 15) {
+
+    filters
+      .classed("hidden", true)
+      .style("opacity", 0)
+      .style("height", "0px");
+
+  }
+
+
+  if (step === 1 ) {
 
     if (currentSelect !== "anaaaa") {
       resetDropDowns()
@@ -461,7 +588,7 @@ function setVisForStep(step, progress) {
 
   }
 
-  else if (step === 3) {
+  else if (step === 3 ) {
 
 
     // change selection colors
@@ -487,7 +614,7 @@ function setVisForStep(step, progress) {
       });
 
   }
-  else if (step === 4) {
+  else if (step === 4 ) {
 
     // change selection colors
 
@@ -510,7 +637,7 @@ function setVisForStep(step, progress) {
       });
 
   }
-  else if (step === 5) {
+  else if (step === 5 ) {
 
     // change selection colors
 
@@ -533,16 +660,17 @@ function setVisForStep(step, progress) {
       });
   }
 
-  else if (step === 6) {
+  else if (step === 6 && direction === "down") {
 
     let pv_rate = updateData(FILTER_DATA, "pnaaaa");
     let cc_rate = updateData(FILTER_DATA, "2naaaa");
 
     // reset data
 
-    if (progress < 0.2 &&
-      currentSelect !== "anaaaa") {
+    if (currentSelect !== "anaaaa") {
       resetDropDowns();
+      replayButton
+        .classed("hidden", true);
     }
 
     // change selection colors
@@ -560,31 +688,40 @@ function setVisForStep(step, progress) {
     paths
       .attr("class", d => "link unselected");
 
-    if (progress >= 0.20 &&
-      currentSelect !== "2naaaa") {
+    setTimeout(function () {
 
       currentSelect = "pnaaaa";
       updateSankey(pv_rate);
+    }, 3000);
 
-      setTimeout(function () {
+    setTimeout(function () {
+      currentSelect = "2naaaa";
+      updateSankey(cc_rate);
 
-        currentSelect = "2naaaa";
-        updateSankey(cc_rate);
+    }, 5000);
 
-      }, 3500)
-    }
+    setTimeout(function () {
+
+      replayButton
+        .classed("hidden", false)
+        .attr("xlink:href", d => "#step" + step);
+
+    }, 5500);
+
   }
 
-  else if (step === 7) {
+  else if (step === 7 && direction === "down") {
 
     let pla1 = updateData(FILTER_DATA, "anaaaa");
     let pla2 = updateData(FILTER_DATA, "alaaaa");
 
     // revert data 
 
-    if (progress < 0.20 &&
-      currentSelect !== "anaaaa") {
+    if (currentSelect !== "anaaaa") {
       resetDropDowns();
+
+      replayButton
+        .classed("hidden", true);
     }
 
     // change selection colors
@@ -603,18 +740,27 @@ function setVisForStep(step, progress) {
 
     // animate impact of pla
 
-    if (progress >= 0.20 &&
-      currentSelect !== "alaaaa") {
+    setTimeout(function () {
+
       currentSelect = "anaaaa";
       updateSankey(pla1);
+    }, 3000);
 
-      setTimeout(function () {
-        currentSelect = "alaaaa";
-        updateSankey(pla2);
-      }, 3500);
-    }
+    setTimeout(function () {
+      currentSelect = "alaaaa";
+      updateSankey(pla2);
+    }, 4000);
+
+    setTimeout(function () {
+
+      replayButton
+        .classed("hidden", false)
+        .attr("xlink:href", d => "#step" + step);
+
+    }, 4500);
+
   }
-  else if (step === 8) {
+  else if (step === 8 && direction === "down") {
 
     let old1 = updateData(FILTER_DATA, "anoaaa");
     let old2 = updateData(FILTER_DATA, "aloaaa");
@@ -633,23 +779,33 @@ function setVisForStep(step, progress) {
     paths
       .attr("class", "link unselected");
 
-    if (progress < 0.5 &&
-      currentSelect !== "anaaaa") {
+    if (currentSelect !== "anaaaa") {
       resetDropDowns();
-    }
 
-    if (progress >= 0.5 &&
-      currentSelect !== "aloaaa") {
+      replayButton
+        .classed("hidden", true);
+    };
+
+    setTimeout(function () {
       currentSelect = "anoaaa";
       updateSankey(old1);
+    }, 2000);
 
-      setTimeout(function () {
-        currentSelect = "aloaaa";
-        updateSankey(old2);
-      }, 3000);
-    }
+    setTimeout(function () {
+      currentSelect = "aloaaa";
+      updateSankey(old2);
+    }, 3500);
+
+    setTimeout(function () {
+
+      replayButton
+        .classed("hidden", false)
+        .attr("xlink:href", d => "#step" + step);
+
+    }, 4000);
+
   }
-  else if (step === 9) {
+  else if (step === 9 && direction === "down") {
 
     let inc1 = updateData(FILTER_DATA, "anaaal");
     let inc2 = updateData(FILTER_DATA, "alaaal");
@@ -667,8 +823,7 @@ function setVisForStep(step, progress) {
     paths
       .attr("class", "link unselected");
 
-    if (progress >= 0.5 &&
-      currentSelect !== "alaaal") {
+    if (currentSelect !== "alaaal") {
       currentSelect = "anaaal";
       updateSankey(inc1);
 
@@ -676,9 +831,18 @@ function setVisForStep(step, progress) {
         currentSelect = "alaaal";
         updateSankey(inc2);
       }, 3000);
+
+      setTimeout(function () {
+
+        replayButton
+          .classed("hidden", false)
+          .attr("xlink:href", d => "#step" + 8);
+
+      }, 3500);
+
     }
   }
-  else if (step === 10) {
+  else if (step === 10 && direction === "down") {
 
     let hisp1 = updateData(FILTER_DATA, "anaHaa");
     let hisp2 = updateData(FILTER_DATA, "alaHaa");
@@ -695,19 +859,28 @@ function setVisForStep(step, progress) {
 
     paths
       .attr("class", "link unselected");
-  
-    if (progress >= 0.5 &&
-      currentSelect !== "alaHaa") {
-    currentSelect = "anaHaa";
-    updateSankey(hisp1);
 
-    setTimeout(function () {
-      currentSelect = "alaHaa";
-      updateSankey(hisp2);
-    }, 3000);
+    if (currentSelect !== "alaHaa") {
+      currentSelect = "anaHaa";
+      updateSankey(hisp1);
+
+      setTimeout(function () {
+        currentSelect = "alaHaa";
+        updateSankey(hisp2);
+      }, 3000);
+
+      setTimeout(function () {
+
+        replayButton
+          .classed("hidden", false)
+          .attr("xlink:href", d => "#step" + 8);
+
+      }, 3500);
+
+
+    }
   }
-  }
-  else if (step === 11) {
+  else if (step === 11 && direction === "down") {
 
     let cc1 = updateData(FILTER_DATA, "2naaaa");
     let cc2 = updateData(FILTER_DATA, "2laaaa");
@@ -725,19 +898,27 @@ function setVisForStep(step, progress) {
     paths
       .attr("class", "link unselected");
 
-    if (progress >= 0.5 &&
-      currentSelect !== "2laaaa") {
+    if (currentSelect !== "2laaaa") {
       currentSelect = "2naaaa";
       updateSankey(cc1);
 
       setTimeout(function () {
         currentSelect = "2laaaa";
         updateSankey(cc2);
-      }, 3000)
+      }, 3000);
+
+      setTimeout(function () {
+
+        replayButton
+          .classed("hidden", false)
+          .attr("xlink:href", d => "#step" + 8);
+
+      }, 3500);
+
     }
   }
 
-  else if (step === 12) {
+  else if (step === 12 && direction === "down") {
 
     // funky selection combos for later
 
@@ -747,44 +928,39 @@ function setVisForStep(step, progress) {
     var selectPaths1 = selectRects1;
     var selectPaths2 = [5, 7, 10];
 
+    // reset colors
+
+    rects
+      .attr("class", d => "node " + d.class);
+    paths
+      .attr("class", d => "link " + d.source.class);
+
+
     // progress triggers
 
-    if (progress <= 0.45 &&
-      currentSelect !== "anaaaa") {
+    if (currentSelect !== "anaaaa") {
       resetDropDowns();
-    }
 
-    if (progress < 0.15) {
+      replayButton
+        .classed("hidden", true);
 
-      // reset colors
+    };
 
-      rects
-        .attr("class", d => "node " + d.class);
-      paths
-        .attr("class", d => "link " + d.source.class);
-    }
 
-    if (progress >= 0.15 && progress < 0.25) {
+    rects
+      .attr("class", d => {
 
-      // change selection colors 
+        if (d.id === 0 ||
+          d.id === 2) {
+          return "node selected";
+        }
+        else { return "node unselected"; }
+      });
 
-      rects
-        .attr("class", d => {
+    paths
+      .attr("class", "link unselected");
 
-          if (d.id === 0 ||
-            d.id === 2) {
-            return "node selected";
-          }
-          else { return "node unselected"; }
-        });
-
-      paths
-        .attr("class", "link unselected");
-
-    }
-    if (progress >= 0.25 && progress < 0.35) {
-
-      // change selection colors
+    setTimeout(function () {
 
       rects
         .transition()
@@ -803,14 +979,15 @@ function setVisForStep(step, progress) {
         .attr("class", d => {
 
           if (selectPaths0.includes(d.source.id) &&
-             selectPaths1.includes(d.target.id)) {
+            selectPaths1.includes(d.target.id)) {
             return "link selected";
           }
           else { return "link unselected"; }
         });
 
-    }
-    if (progress >= 0.35 && progress < 0.45) {
+    }, 2000);
+
+    setTimeout(function () {
 
       // change selection colors
 
@@ -831,48 +1008,58 @@ function setVisForStep(step, progress) {
         .attr("class", d => {
 
           if (selectPaths1.includes(d.source.id) &&
-              selectPaths2.includes(d.target.id)) {
+            selectPaths2.includes(d.target.id)) {
             return "link selected";
           }
           else { return "link unselected"; }
         });
 
-    }
+    }, 3000);
 
-    if (progress >= 0.45) {
+    setTimeout(function () {
 
       if (currentSelect !== "alaaaa") {
         currentSelect = "alaaaa";
         let selectedData = updateData(FILTER_DATA, currentSelect);
         updateSankey(selectedData);
       }
-    
-        rects
-          .attr("class", d => {
 
-            if (selectRects2.includes(d.id)) {
-              return "node selected";
-            }
-            else { return "node unselected"; }
-          });
+      rects
+        .attr("class", d => {
 
-        paths
-          .attr("class", d => {
+          if (selectRects2.includes(d.id)) {
+            return "node selected";
+          }
+          else { return "node unselected"; }
+        });
 
-            if (selectPaths1.includes(d.source.id) &&
-              selectPaths2.includes(d.target.id)) {
-              return "link selected";
-            }
-            else { return "link unselected"; }
-          });
+      paths
+        .attr("class", d => {
 
-      }
+          if (selectPaths1.includes(d.source.id) &&
+            selectPaths2.includes(d.target.id)) {
+            return "link selected";
+          }
+          else { return "link unselected"; }
+        });
 
-    }
+    }, 4000);
+
+    setTimeout(function () {
+
+      replayButton
+        .classed("hidden", false)
+        .attr("xlink:href", d => "#step" + step);
+
+    }, 4500);
+
+  }
+
 
   else if (step === 13) {
 
-    // collapsing filters incase of up-scrolling
+    if (direction === "up") {
+      // collapsing filters incase of up-scrolling
 
       filters
         .classed("hidden", false)
@@ -880,29 +1067,28 @@ function setVisForStep(step, progress) {
         .duration(1000)
         .style("opacity", 0)
         .style("height", "0px");
+    } else {
 
-    
-    // select PLA data 
+      // select PLA data 
 
-    if (currentSelect !== "a1aaaa") {
+      if (currentSelect !== "a1aaaa") {
 
-      currentSelect = "a1aaaa";
-      let selectedData = updateData(FILTER_DATA, currentSelect);
-      updateSankey(selectedData);
+        currentSelect = "a1aaaa";
+        let selectedData = updateData(FILTER_DATA, currentSelect);
+        updateSankey(selectedData);
 
-    }
+      }
 
-    // reset colors
+      // reset colors
 
-    rects
-      .attr("class", d => "node " + d.class);
-    paths
-      .attr("class", d => "link " + d.source.class);
-
+      rects
+        .attr("class", d => "node " + d.class);
+      paths
+        .attr("class", d => "link " + d.source.class);
+    };
   }
 
-  else if (step === 14 &&
-    progress >= 0.1) {
+  else if (step === 14) {
 
     select("figure")
       .style("height", "700px")
@@ -915,7 +1101,30 @@ function setVisForStep(step, progress) {
       .style("opacity", 1)
       .style("height", "100px");
 
-    resetDropDowns();
+    if (currentSelect !== "anaaaa") {
+      resetDropDowns();
+    }
+
+    rects
+      .attr("class", d => "node " + d.class);
+    paths
+      .attr("class", d => "link " + d.source.class);
+
+  }
+  else if ( step === 15 ) {
+
+    select("figure")
+      .style("height", "700px")
+      .style("bottom", "50px");
+
+    filters
+      .classed("hidden", false)
+      .style("opacity", 1)
+      .style("height", "100px");
+
+    if (currentSelect !== "anaaaa") {
+      resetDropDowns();
+    }
 
     rects
       .attr("class", d => "node " + d.class);
@@ -935,6 +1144,10 @@ function resetDropDowns() {
   currentSelect = "anaaaa";
 
   let selectedData = updateData(FILTER_DATA, currentSelect);
+
+  currentRate = selectedData.gradPerc;
+  currentCost = selectedData.cost;
+  currentTime = selectedData.time;
 
   updateSankey(selectedData);
 

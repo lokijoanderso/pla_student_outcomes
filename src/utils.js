@@ -374,3 +374,72 @@ export function makeTitleText(currentSelection) {
   return title.join("");
 
 }
+
+
+// manage animations
+
+export function stepFired(step, reset) {
+
+  let history = {
+
+    1: 0,
+    2: 0,
+    3: 0,
+    4: 0,
+    5: 0,
+    6: 0,
+    7: 0,
+    8: 0,
+    9: 0,
+    10: 0,
+    11: 0,
+    12: 0,
+    13: 0,
+    14: 0,
+    15: 0,
+
+  };
+
+  console.log(step, " trigger ", history[step]);
+
+  if (reset) {
+    console.log("resetting step animation");
+    history[step] = 0;
+    return true;
+  }
+
+  if (history[step] === 0) {
+    history[step] = 1;
+    return true;
+  }
+  else {
+    return false;
+  }
+}
+
+
+
+// svg collection for project
+
+export function renderSVG(choice) {
+
+  let svgCollection = {
+
+    "arrow": "M23.677 18.52c.914 " +
+      "1.523-.183 3.472-1.967 3.472h-19.414c-1.784 " +
+      "0-2.881-1.949-1.967-3.472l9.709-16.18c.891-1.483 3.041-1.48 " +
+      "3.93 0l9.709 16.18z",
+
+    "replay": "M13.5 2c-5.621 0-10.211 " +
+      "4.443-10.475 10h-3.025l5 6.625 5-6.625h-2.975c.257-3.351 " +
+      "3.06-6 6.475-6 3.584 0 6.5 2.916 6.5 6.5s-2.916 6.5-6.5 " +
+      "6.5c-1.863 0-3.542-.793-4.728-2.053l-2.427 3.216c1.877 1.754 4.389 " +
+      "2.837 7.155 2.837 5.79 0 10.5-4.71 10.5-10.5s-4.71-10.5-10.5-10.5z",
+
+  };
+
+  if (svgCollection[choice]) {
+    return svgCollection[choice];
+  } else { return false; }
+
+}

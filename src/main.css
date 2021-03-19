@@ -87,9 +87,7 @@ h3 {
     font-size: 18px;
 }
 
-#calloutLabels h2 {
-  font-size: 20px;
-}
+
 
 
   h2.title {
@@ -160,12 +158,28 @@ div#filters {
   display: none;
 }
 
+#changes .hidden {
+   display: unset;
+   opacity: 0;
+}
+
 
 path {
   stroke-opacity: 0.35;
   fill: none;
 }
 
+#replay {
+    margin: 0px;
+    padding: 0px;
+    width: 30px;
+    height: 30px;
+}
+
+#replay path {
+    fill: #666666;
+    background-color: white;
+}
 
 
 #scrolly {
@@ -372,20 +386,12 @@ div#callouts {
   flex-direction: column;
 }
 
-div#callout {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    flex-direction: row;
-    min-width: 700px;
-    margin: 0px;
-    height: 35px;
-
-}
-
-div#calloutLabels {
+div#callout,
+div#calloutLabels,
+div#changes {
   display: flex;
   justify-content: space-around;
+  justify-items: center;
   align-items: center;
   flex-direction: row;
   min-width: 700px;
@@ -393,10 +399,22 @@ div#calloutLabels {
   height: 25px;
 }
 
-div#callout h1, div#callout h2,
-div#calloutLabels h1, div#calloutLabels h2 {
-  width: 150px;
-  text-align: center;
+    div#callout h1, div#callout h2
+    div#calloutLabels h1, div#calloutLabels h2
+    div#changes h1, div#changes h2 {
+      text-align: center;
+      vertical-align: bottom;
+      width: 200px;
+    }
+
+div#changes h2 {
+    font-size: 18px;
+    margin-top: 0px;
 }
 
+#calloutLabels h2 {
+  font-size: 20px;
+  width: 200px;
+  text-align: center;
+}
 
