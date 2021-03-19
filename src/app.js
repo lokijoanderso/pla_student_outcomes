@@ -93,7 +93,7 @@ explore.on("click", function () {
 
 const margin = { top: 10, right: 10, bottom: 0, left: 10 },
   width = 800 - margin.left - margin.right,
-  height = 500 - margin.top - margin.bottom;
+  height = 450 - margin.top - margin.bottom;
 
 
 // append the svg objects to the body of the page
@@ -169,6 +169,10 @@ csv(RATE_DATA)
 
     // generic window resize listener event
     function handleResize() {
+
+      // These are the orignal settings... I want to see if I can figure
+      // out how to make the svg sizable before using these settings
+
       // 1. update height of step elements
       //var stepH = Math.floor(window.innerHeight * 0.75);
       //step.style("height", stepH + "px");
@@ -366,7 +370,8 @@ function updateSankey(data) {
     .attr("id", "tooltip")
     .style("opacity", 0);
 
-  // add in the links 
+  // add in the links
+  
   let links = svg
     .selectAll("g .links")
     .join("g .links");
@@ -556,9 +561,10 @@ function updateSankey(data) {
   currentCost = data.cost;
   currentTime = data.time;
 
-  console.log("new grad rate:", data.gradPerc);
-  console.log("new cost:", data.cost);
-  console.log("new time:", data.time); 
+  // debugging prints commented out
+  // console.log("new grad rate:", data.gradPerc);
+  // console.log("new cost:", data.cost);
+  // console.log("new time:", data.time); 
 
   // update the chart title
 
